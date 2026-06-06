@@ -1,18 +1,19 @@
-from fastapi_mail import FastMail, MessageSchema, MessageType
 from pydantic import EmailStr
+from fastapi_mail import FastMail, MessageSchema, MessageType
 
+# config
 from config.email_config import mail_conf
 
 
 class MailService:
     @staticmethod
     async def send_mail(
-        correo: EmailStr,        
+        correo: EmailStr,
         asunto: str,
         template_name: str,
         context: dict | None = None,
-    ) :
-       
+    ):
+
         message = MessageSchema(
             subject=asunto,
             recipients=[correo],

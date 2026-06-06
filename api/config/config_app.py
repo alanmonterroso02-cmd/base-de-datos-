@@ -19,8 +19,7 @@ class ConfigApp(BaseSettings):
     MAIL_STARTTLS: bool = False
     MAIL_SSL_TLS: bool = True
     # jwt
-    SECRET :str
-
+    SECRET: str
 
 
 templates = Jinja2Templates(directory="templates")

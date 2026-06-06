@@ -8,24 +8,22 @@ class UserValidator:
     def __init__(self, session: Session):
         self.session = session
 
-    def validate_email_exists(self, correo: str) -> None:
+    def validate_uniqueness(self, correo: str, nombre: str) -> None:
         existing = self.session.exec(
-            select(UsuariosModel).where(UsuariosModel.correo == correo)
+            select(UsuariosModel).where(
+                (UsuariosModel.correo == correo)
+                | (UsuariosModel.nombre_completo == nombre)
+            )
         ).first()
 
         if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El correo ya está registrado.",
-            )
-
-    def validate_name_exists(self, nombre: str) -> None:
-        existing = self.session.exec(
-            select(UsuariosModel).where(UsuariosModel.nombre_completo == nombre)
-        ).first()
-
-        if existing:
-            raise HTTPException(
-                status_code=status.HTTP_400_BAD_REQUEST,
-                detail="El nombre ya está registrado.",
-            )
+            if existing.correo == correo:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El correo ya está registrado.",
+                )
+            if existing.nombre_completo == nombre:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="El nombre ya está registrado.",
+                )

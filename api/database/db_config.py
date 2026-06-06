@@ -11,4 +11,6 @@ DATABASE_URL = (
     f"{config.DB_NAME}"
 )
 
-engine = create_engine(DATABASE_URL, echo=True, pool_pre_ping=True)
+engine = create_engine(
+    DATABASE_URL, echo=False, pool_pre_ping=True, pool_size=10, max_overflow=20
+)

@@ -18,6 +18,6 @@ class UsuariosModel(SQLModel, table=True):
     id: str = Field(default_factory=generar_id, primary_key=True)
 
     nombre_completo: str = Field(unique=True)
-    correo: str = Field(unique=True)   # ✅ Typo corregido: "coreo" → "correo"
+    correo: str = Field(unique=True)
     pin: str
     rol: RolEnum

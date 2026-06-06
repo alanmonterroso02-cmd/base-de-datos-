@@ -1,10 +1,11 @@
 import jwt
 from datetime import datetime, timedelta, timezone
+
+# config
 from config.config_app import config
 
 
 class JWTService:
-
     @classmethod
     def create_token(cls, user_id: str, role: str, mode: str) -> str:
         expire_minutes = 10 if mode == "esp32" else 12 * 60

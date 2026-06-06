@@ -17,7 +17,6 @@ class LoginRequestSchema(BaseModel):
         example="1236952",
     )
 
-
     mode: Literal["web", "esp32"] = Field(
         default="web",
         description="Tipo de autenticación: web o esp32",

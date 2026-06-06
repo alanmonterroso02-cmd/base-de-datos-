@@ -2,7 +2,7 @@ from fastapi import FastAPI, Request
 from contextlib import asynccontextmanager
 from config.config_app import templates
 from database import create_tables
-from app.controller.usuarios.usuarios_autenticacion import usuarios_autenticacion
+from app.controller.usuarios import usuarios_autenticacion_route
 
 
 @asynccontextmanager
@@ -19,4 +19,4 @@ def index(request: Request):
     return templates.TemplateResponse(request, "pages/index.html")
 
 
-app.include_router(usuarios_autenticacion)
+app.include_router(usuarios_autenticacion_route)

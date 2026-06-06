@@ -1,30 +1,33 @@
 import secrets
+from fastapi import HTTPException
 from sqlmodel import Session, select
-from fastapi import Depends, HTTPException
 
-from database import get_session
+# models
 from ..models.user_model import UsuariosModel, RolEnum
-from ..schemas.create_user import CreateUserRequestSchema
+
+# schemas
 from ..schemas.login_user import LoginRequestSchema
-from ..util.password_service import PasswordService
+from ..schemas.create_user import CreateUserRequestSchema
+
+# util
 from ..util.jwt_service import JWTService
+from ..util.password_service import PasswordService
 from ..validators.user_validator import UserValidator
 
 
 class UsuariosAutenticacionService:
-    def __init__(self, session: Session = Depends(get_session)):
+    def __init__(self, session: Session):
         self.session = session
         self.validator = UserValidator(self.session)
 
-    async def create(self, data: CreateUserRequestSchema) -> dict:
-        self.validator.validate_email_exists(data.correo)
-        self.validator.validate_name_exists(data.nombre_completo)
+    def create(self, data: CreateUserRequestSchema) -> dict:
+        self.validator.validate_uniqueness(data.correo, data.nombre_completo)
 
         raw_pin = str(secrets.randbelow(900_000_000_000) + 100_000_000_000)
 
         user = UsuariosModel(
             nombre_completo=data.nombre_completo,
-            correo=data.correo,        
+            correo=data.correo,
             pin=PasswordService.hash(raw_pin),
             rol=RolEnum.Usuario,
         )
@@ -35,7 +38,7 @@ class UsuariosAutenticacionService:
 
         return {
             "id": user.id,
-            "correo": user.correo,        
+            "correo": user.correo,
             "context": {
                 "nombre": user.nombre_completo,
                 "token": user.id,
@@ -43,7 +46,7 @@ class UsuariosAutenticacionService:
             },
         }
 
-    async def login(self, data: LoginRequestSchema) -> dict:
+    def login(self, data: LoginRequestSchema) -> dict:
         user = self.session.exec(
             select(UsuariosModel).where(UsuariosModel.id == data.token)
         ).first()
