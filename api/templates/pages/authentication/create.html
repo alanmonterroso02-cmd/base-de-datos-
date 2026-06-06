@@ -1,0 +1,36 @@
+{% from "layouts/pagina_publica.html" import pagina_publica %}
+
+{{ pagina_publica(
+    "Login",
+    '
+    <center>
+        <form action="/create" method="post">
+
+            <div>
+                <label for="nombre_completo">Nombre Completo</label>
+                <input
+                    type="text"
+                    id="nombre_completo"
+                    name="nombre_completo"
+                    required
+                >
+            </div>
+
+            <div>
+                <label for="coreo">Correo Electrónico</label>
+                <input
+                    type="email"
+                    id="coreo"
+                    name="coreo"
+                    required
+                >
+            </div>
+
+            <button type="submit">
+                Crear Usuario
+            </button>
+
+        </form>
+    </center>
+    '
+) }}
