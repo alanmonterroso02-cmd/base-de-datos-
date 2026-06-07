@@ -18,23 +18,19 @@ async def lifespan(app: FastAPI):
     create_tables()
 
     with Session(engine) as session:
-        existe = session.exec(
-            select(CategoriaReciclajeModel)
-        ).first()
+        existe = session.exec(select(CategoriaReciclajeModel)).first()
 
         if not existe:
-            session.add_all([
-                CategoriaReciclajeModel(
-                    nombre="Plástico",
-                    puntos_por_gramo=0.10,
-                    activa=True
-                ),
-                CategoriaReciclajeModel(
-                    nombre="Aluminio",
-                    puntos_por_gramo=0.20,
-                    activa=True
-                )
-            ])
+            session.add_all(
+                [
+                    CategoriaReciclajeModel(
+                        nombre="Plástico", puntos_por_gramo=0.10, activa=True
+                    ),
+                    CategoriaReciclajeModel(
+                        nombre="Aluminio", puntos_por_gramo=0.20, activa=True
+                    ),
+                ]
+            )
 
             session.commit()
 
@@ -46,17 +42,10 @@ app = FastAPI(lifespan=lifespan)
 
 @app.get("/")
 def index(request: Request):
-    return templates.TemplateResponse(
-        request,
-        "pages/index.html"
-    )
+    return templates.TemplateResponse(request, "pages/index.html")
 
 
-app.mount(
-    "/static",
-    StaticFiles(directory="static"),
-    name="static"
-)
+app.mount("/static", StaticFiles(directory="static"), name="static")
 
 app.include_router(reciclador_router)
 app.include_router(categoria_router)

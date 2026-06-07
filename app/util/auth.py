@@ -8,12 +8,11 @@ security = HTTPBearer(auto_error=False)
 
 
 def get_current_reciclador(
-    credentials: HTTPAuthorizationCredentials | None = Depends(security)
+    credentials: HTTPAuthorizationCredentials | None = Depends(security),
 ):
     if credentials is None:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="No autenticado"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="No autenticado"
         )
 
     try:
@@ -21,20 +20,17 @@ def get_current_reciclador(
 
         if "nit" not in payload:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED,
-                detail="Token inválido"
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido"
             )
 
         return payload
 
     except jwt.ExpiredSignatureError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token expirado"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token expirado"
         )
 
     except jwt.InvalidTokenError:
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Token inválido"
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="Token inválido"
         )

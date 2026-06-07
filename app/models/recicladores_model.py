@@ -9,8 +9,4 @@ class RecicladoresModel(SQLModel, table=True):
 
     nombre_completo: str
 
-    puntos: Decimal = Field(
-        default=0,
-        decimal_places=2,
-        max_digits=12
-    )
+    puntos: Decimal = Field(default=0, decimal_places=2, max_digits=12)

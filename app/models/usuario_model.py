@@ -8,8 +8,6 @@ class RolEnum(Enum):
     Colaborador = "Colaborador"
 
 
-
-
 class UsuariosModel(SQLModel, table=True):
     __tablename__ = "usuarios"
 
