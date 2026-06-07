@@ -1,23 +1,20 @@
-import secrets
 from enum import Enum
+from uuid import UUID, uuid4
 from sqlmodel import SQLModel, Field
 
 
 class RolEnum(Enum):
     Admin = "Admin"
-    Usuario = "Usuario"
+    Colaborador = "Colaborador"
 
 
-def generar_id() -> str:
-    return str(secrets.randbelow(900_000_000_000) + 100_000_000_000)
 
 
 class UsuariosModel(SQLModel, table=True):
     __tablename__ = "usuarios"
 
-    id: str = Field(default_factory=generar_id, primary_key=True)
-
+    id: UUID = Field(default_factory=uuid4, primary_key=True)
     nombre_completo: str = Field(unique=True)
     correo: str = Field(unique=True)
-    pin: str
+    contrasena: str
     rol: RolEnum

@@ -1,0 +1,32 @@
+:root {
+    /* Colores principales */
+    --color-primario: #22C55E;
+    --color-primario-claro: #4ADE80;
+    --color-primario-oscuro: #15803D;
+
+   
+
+    /* Fondos */
+    --color-fondo: #000000;
+    --color-fondo-secundario: #0B1220;
+    --color-superficie: #111827;
+    --color-tarjeta: #161B22;
+
+    /* Bordes */
+    --color-borde: #1E293B;
+    --color-borde-claro: #334155;
+
+    /* Texto */
+    --color-texto: #F8FAFC;
+    --color-texto-secundario: #CBD5E1;
+    --color-texto-tenue: #94A3B8;
+
+    /* Estados */
+    --color-exito: #22C55E;
+    --color-advertencia: #F59E0B;
+    --color-error: #EF4444;
+
+    /* Sombras y efectos */
+    --sombra-verde: rgba(34, 197, 94, 0.25);
+    --efecto-verde: rgba(21, 128, 61, 0.25);
+}

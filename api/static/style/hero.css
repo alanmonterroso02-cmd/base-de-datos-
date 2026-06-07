@@ -1,0 +1,90 @@
+.hero {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    overflow: hidden;
+    background:
+        radial-gradient(circle at top right, var(--sombra-verde), transparent 40%),
+        radial-gradient(circle at bottom left, var(--efecto-verde), transparent 40%),
+        var(--color-fondo);
+}
+
+.hero-content {
+    max-width: 900px;
+    text-align: center;
+    padding: 2rem;
+    z-index: 1;
+    animation: fadeIn 1s ease-out;
+}
+
+.hero h1 {
+    font-size: clamp(2.5rem, 8vw, 5.5rem);
+    font-weight: 800;
+    line-height: 1.1;
+    margin-bottom: 1.5rem;
+    color: var(--color-texto);
+    letter-spacing: -0.02em;
+}
+
+.hero p {
+    max-width: 700px;
+    margin: 0 auto 2.5rem;
+    color: var(--color-texto-tenue);
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    line-height: 1.6;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    background: rgba(34, 197, 94, 0.1);
+    border: 1px solid var(--color-primario);
+    border-radius: 10px;
+    color: var(--color-primario-claro);
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 2rem;
+    backdrop-filter: blur(4px);
+}
+
+.hero-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    align-items: center;
+}
+
+.btn-primary, .btn-secondary {
+    padding: 0.8rem 1.8rem;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    font-size: 1rem;
+}
+
+.btn-primary {
+    background-color: var(--color-primario);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primario-claro);
+    transform: translateY(-2px);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: var(--color-texto);
+    border: 1px solid var(--color-borde-claro);
+}
+
+.btn-secondary:hover {
+    background-color: var(--color-superficie);
+    border-color: var(--color-primario);
+    transform: translateY(-2px);
+}
+

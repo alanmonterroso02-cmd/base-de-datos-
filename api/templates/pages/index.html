@@ -1,6 +1,34 @@
 {% from "layouts/pagina_publica.html" import pagina_publica %}
 
-{{ pagina_publica(
-    "Inicio",
-    "<h1>Bienvenido</h1>"
-) }}
+{% call pagina_publica("Inicio") %}
+<section class="hero">
+    <div class="hero-content">
+
+        <span class="badge">
+            Eco Desarrolladores
+        </span>
+
+        <h1>
+            Tecnología para construir
+            un futuro más sostenible
+        </h1>
+
+        <p>
+            Somos una comunidad de desarrolladores que crea soluciones
+            tecnológicas para apoyar iniciativas ambientales, reciclaje,
+            educación ecológica e innovación sostenible.
+        </p>
+
+        <div class="hero-buttons">
+            <a href="#proyectos" class="btn-primary">
+                Ver iniciativa
+            </a>
+
+            <a href="/create" class="btn-secondary">
+                Unirse
+            </a>
+        </div>
+
+    </div>
+</section>
+{% endcall %}

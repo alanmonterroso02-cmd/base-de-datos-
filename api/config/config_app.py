@@ -10,14 +10,6 @@ class ConfigApp(BaseSettings):
     DB_PORT: int = 3306
     DB_USER: str = "app_user"
     DB_PASSWORD: str = "app123"
-    # Email
-    MAIL_USERNAME: str
-    MAIL_PASSWORD: str
-    MAIL_FROM: str
-    MAIL_PORT: int = 465
-    MAIL_SERVER: str
-    MAIL_STARTTLS: bool = False
-    MAIL_SSL_TLS: bool = True
     # jwt
     SECRET: str
 
