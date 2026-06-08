@@ -1,5 +1,5 @@
-from fastapi import APIRouter, Depends
 from sqlmodel import Session
+from fastapi import APIRouter, Depends
 
 from database import get_session
 from app.service.categoria_reciclaje_service import CategoriaReciclajeService

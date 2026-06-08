@@ -1,0 +1,13 @@
+{% macro app_nav(nav_center="", nav_right="") %}
+<nav class="app_nav">
+  <div class="nav_left">
+    <h1>Titulo</h1>
+  </div>
+
+  <ul class="nav_center">
+    {{ nav_center | safe }}
+  </ul>
+
+  <div class="nav_right">{{ nav_right | safe }}</div>
+</nav>
+{% endmacro %}

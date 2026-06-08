@@ -1,16 +1,15 @@
-from contextlib import asynccontextmanager
-
-from fastapi import FastAPI, Request
-from fastapi.staticfiles import StaticFiles
+from fastapi import FastAPI
 from sqlmodel import Session, select
+from contextlib import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
 
-from config.config_app import templates
+# base de datos
 from database import create_tables
 from database.db_config import engine
-
 from app.models.categorias_reciclaje_model import CategoriaReciclajeModel
-from app.controller.resicladores_controller import reciclador_router
-from app.controller.categoria_reciclaje_controller import categoria_router
+
+# controllers
+from app.controller import reciclador_router, categoria_router, pages_routes
 
 
 @asynccontextmanager
@@ -40,12 +39,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(lifespan=lifespan)
 
 
-@app.get("/")
-def index(request: Request):
-    return templates.TemplateResponse(request, "pages/index.html")
-
-
 app.mount("/static", StaticFiles(directory="static"), name="static")
-
+app.include_router(pages_routes)
 app.include_router(reciclador_router)
 app.include_router(categoria_router)

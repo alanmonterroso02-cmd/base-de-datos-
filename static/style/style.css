@@ -1,5 +1,7 @@
 @import url("app_colors.css");
 @import url("hero.css");
+@import url("components.css");
+@import url("navbar.css");
 
 * {
     margin: 0;

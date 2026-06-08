@@ -1,5 +1,6 @@
 from sqlmodel import Session
-from fastapi import APIRouter, Depends, Form, HTTPException
+from config.config_app import templates
+from fastapi import APIRouter, Depends, Form, HTTPException, Request
 
 from database import get_session
 from app.util.auth import get_current_reciclador
