@@ -1,0 +1,96 @@
+{% from "layouts/dashboard/dashboard_reciclador.html" import dashboard_reciclador %}
+{% from "components/ui/spinner.html" import spinner %}
+
+{% call dashboard_reciclador(title="Mis Cupones") %}
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Mis Cupones</h5>
+        </div>
+        <div class="card-body">
+          <div class="row g-4" id="cupones-grid">
+            {{ spinner(text="Cargando tus cupones...") }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const grid = document.getElementById('cupones-grid');
+  const token = EcoAPI.getToken();
+  if (!token) { window.location.href = '/login'; return; }
+
+  async function cargarCupones() {
+    try {
+      const cupones = await EcoAPI.get('/reciclador/cupones');
+      if (!cupones) return;
+
+      if (cupones.length === 0) {
+        grid.innerHTML = `
+          <div class="col-12 text-center py-5">
+            <i class="bi bi-ticket text-muted" style="font-size: 3rem;"></i>
+            <p class="mt-2 text-muted">No tienes cupones todav\u00eda.</p>
+            <a href="/reciclador/premios" class="btn btn-primary">Canjear premios</a>
+          </div>
+        `;
+        return;
+      }
+
+      grid.innerHTML = cupones.map(c => {
+        const usado = c.esta_usado;
+        const expirado = new Date(c.fecha_expiracion) < new Date();
+        const clase = usado || expirado ? 'border-secondary opacity-50' : '';
+        const badge = usado ? 'Usado' : expirado ? 'Expirado' : 'Vigente';
+        const badgeClase = usado ? 'bg-secondary' : expirado ? 'bg-danger' : 'bg-success';
+
+        return `
+          <div class="col-md-6 col-lg-4">
+            <div class="card h-100 shadow-sm ${clase}">
+              <div class="card-body">
+                <div class="d-flex align-items-center mb-3">
+                  <img src="${c.premio_imagen || '/static/img/default-premio.png'}"
+                       class="rounded me-3" style="width: 64px; height: 64px; object-fit: cover;"
+                       alt="${c.premio_nombre}">
+                  <div>
+                    <h6 class="mb-1">${c.premio_nombre}</h6>
+                    <span class="badge ${badgeClase}">${badge}</span>
+                  </div>
+                </div>
+                <hr>
+                <div class="small">
+                  <p class="mb-1">
+                    <strong>C\u00f3digo:</strong>
+                    <code class="user-select-all">${c.codigo}</code>
+                  </p>
+                  <p class="mb-1">
+                    <strong>Emisi\u00f3n:</strong>
+                    ${new Date(c.fecha_emision).toLocaleDateString()}
+                  </p>
+                  <p class="mb-0">
+                    <strong>Vence:</strong>
+                    ${new Date(c.fecha_expiracion).toLocaleDateString()}
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    } catch (error) {
+      console.error(error);
+      grid.innerHTML = '<div class="col-12 text-center py-5 text-danger">Error al cargar cupones.</div>';
+      EcoToast.error('Error al cargar los cupones');
+    }
+  }
+
+  cargarCupones();
+});
+</script>
+
+{% endcall %}

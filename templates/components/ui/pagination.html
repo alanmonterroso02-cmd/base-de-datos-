@@ -1,0 +1,53 @@
+{% macro pagination(current, total, base_url, query_param="page", size="", align="center", show_limits=true, max_visible=7) %}
+{% if total > 1 %}
+{% set size_class = "pagination-" ~ size if size in ["sm", "lg"] else "" %}
+{% set align_class = "justify-content-" ~ align if align in ["start", "center", "end"] else "justify-content-center" %}
+{% set half = (max_visible // 2) %}
+{% set start_page = [current - half, 1] | max %}
+{% set end_page = [start_page + max_visible - 1, total] | min %}
+{% if end_page - start_page < max_visible - 1 %}
+{% set start_page = [end_page - max_visible + 1, 1] | max %}
+{% endif %}
+<nav aria-label="Paginación">
+  <ul class="pagination {{ size_class }} {{ align_class }} mb-0">
+    {% if show_limits %}
+    <li class="page-item {{ 'disabled' if current <= 1 }}">
+      <a class="page-link" href="{{ base_url }}?{{ query_param }}=1" aria-label="Primera">
+        <i class="bi bi-chevron-double-left"></i>
+      </a>
+    </li>
+    {% endif %}
+    <li class="page-item {{ 'disabled' if current <= 1 }}">
+      <a class="page-link" href="{{ base_url }}?{{ query_param }}={{ current - 1 }}" tabindex="-1" aria-label="Anterior">
+        <i class="bi bi-chevron-left"></i>
+      </a>
+    </li>
+    {% for i in range(start_page, end_page + 1) %}
+    <li class="page-item {{ 'active' if i == current }}">
+      <a class="page-link" href="{{ base_url }}?{{ query_param }}={{ i }}">{{ i }}</a>
+    </li>
+    {% endfor %}
+    <li class="page-item {{ 'disabled' if current >= total }}">
+      <a class="page-link" href="{{ base_url }}?{{ query_param }}={{ current + 1 }}" aria-label="Siguiente">
+        <i class="bi bi-chevron-right"></i>
+      </a>
+    </li>
+    {% if show_limits %}
+    <li class="page-item {{ 'disabled' if current >= total }}">
+      <a class="page-link" href="{{ base_url }}?{{ query_param }}={{ total }}" aria-label="Última">
+        <i class="bi bi-chevron-double-right"></i>
+      </a>
+    </li>
+    {% endif %}
+  </ul>
+</nav>
+{% endif %}
+{% endmacro %}
+
+{% macro pagination_info(current, total, item_name="elementos") %}
+{% if total > 0 %}
+<small class="text-muted">
+  Página {{ current }} de {{ total }} ({{ item_name }})
+</small>
+{% endif %}
+{% endmacro %}

@@ -1,0 +1,33 @@
+{% macro profile_header(name_id="eco-nombre", points_id="eco-puntos", avatar="", show_points=true, show_avatar=true, name_fallback="Cargando...", points_fallback="-- pts") %}
+<div class="d-flex align-items-center gap-3">
+  {% if show_avatar and avatar %}
+  <img src="{{ avatar }}" class="rounded-circle" width="40" height="40" style="object-fit: cover;" alt="Avatar">
+  {% endif %}
+  <span id="{{ name_id }}" class="fw-semibold text-secondary">{{ name_fallback }}</span>
+  {% if show_points %}
+  <span id="{{ points_id }}" class="badge bg-success fs-6 px-3 py-2">{{ points_fallback }}</span>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro profile_dropdown(name_id="eco-nombre", items=[], avatar="") %}
+<div class="dropdown">
+  <a class="d-flex align-items-center text-decoration-none dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {% if avatar %}
+    <img src="{{ avatar }}" class="rounded-circle me-2" width="32" height="32" style="object-fit: cover;" alt="">
+    {% endif %}
+    <span id="{{ name_id }}" class="fw-semibold text-secondary">Cargando...</span>
+  </a>
+  <ul class="dropdown-menu dropdown-menu-end shadow-sm">
+    {% for item in items %}
+    <li>
+      <a class="dropdown-item" href="{{ item.url }}">
+        {% if item.icon %}<i class="bi {{ item.icon }} me-2"></i>{% endif %}
+        {{ item.label }}
+      </a>
+    </li>
+    {% if item.divider %}<li><hr class="dropdown-divider"></li>{% endif %}
+    {% endfor %}
+  </ul>
+</div>
+{% endmacro %}

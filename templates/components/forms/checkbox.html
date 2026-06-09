@@ -1,0 +1,62 @@
+{% macro checkbox(label, name, id="", checked=false, value="1", required=false, disabled=false, class="", help_text="") %}
+{% set input_id = id or name %}
+<div class="form-check mb-2 {{ class }}">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    value="{{ value }}"
+    {% if checked %}checked{% endif %}
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}>
+  <label class="form-check-label small" for="{{ input_id }}">
+    {{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}
+  </label>
+  {% if help_text %}
+  <div class="form-text ms-3">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro switch(label, name, id="", checked=false, value="1", disabled=false, help_text="") %}
+{% set input_id = id or name %}
+<div class="form-check form-switch mb-2">
+  <input
+    class="form-check-input"
+    type="checkbox"
+    role="switch"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    value="{{ value }}"
+    {% if checked %}checked{% endif %}
+    {% if disabled %}disabled{% endif %}>
+  <label class="form-check-label small" for="{{ input_id }}">{{ label }}</label>
+  {% if help_text %}
+  <div class="form-text ms-3">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro radio(label, name, options, id="", inline=false, selected_value="") %}
+{% set field_id = id or name %}
+<div class="mb-3">
+  {% if label %}
+  <label class="form-label small fw-medium text-dark">{{ label }}</label>
+  {% endif %}
+  {% for opt in options %}
+  <div class="form-check {% if inline %}form-check-inline{% endif %}">
+    <input
+      class="form-check-input"
+      type="radio"
+      name="{{ name }}"
+      id="{{ field_id }}_{{ loop.index }}"
+      value="{{ opt.value }}"
+      {% if selected_value == opt.value %}checked{% endif %}>
+    <label class="form-check-label small" for="{{ field_id }}_{{ loop.index }}">
+      {{ opt.label }}
+    </label>
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

@@ -1,0 +1,22 @@
+{% macro textarea(label, name, id="", placeholder="", value="", required=false, disabled=false, readonly=false, rows=3, maxlength="", help_text="", class="") %}
+{% set input_id = id or name %}
+<div class="mb-3">
+  {% if label %}
+  <label for="{{ input_id }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  {% endif %}
+  <textarea
+    class="form-control form-control-sm border-secondary-subtle py-2 {{ class }}"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    placeholder="{{ placeholder }}"
+    rows="{{ rows }}"
+    {% if maxlength %}maxlength="{{ maxlength }}"{% endif %}
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if readonly %}readonly{% endif %}
+    style="background: #fafafa;">{{ value }}</textarea>
+  {% if help_text %}
+  <div class="form-text">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}

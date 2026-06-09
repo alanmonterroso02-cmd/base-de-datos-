@@ -1,0 +1,55 @@
+{% macro spinner(text="Cargando...", variant="primary", size="", class="", type="border") %}
+{% set type_class = "spinner-" ~ type %}
+{% set size_class = " " ~ type_class ~ "-sm" if size == "sm" else "" %}
+<div class="text-center py-5 {{ class }}">
+  <div class="{{ type_class }}{{ size_class }} text-{{ variant }}" role="status">
+    <span class="visually-hidden">{{ text }}</span>
+  </div>
+  {% if text %}
+  <p class="mt-2 text-muted small">{{ text }}</p>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro spinner_inline(text="", variant="primary", size="sm") %}
+<span class="spinner-border spinner-border-{{ size }} text-{{ variant }} me-2" role="status">
+  <span class="visually-hidden">Cargando...</span>
+</span>
+{% if text %}{{ text }}{% endif %}
+{% endmacro %}
+
+{% macro spinner_grow(text="Cargando...", variant="primary", size="") %}
+{% set size_class = " spinner-grow-sm" if size == "sm" else "" %}
+<div class="text-center py-5">
+  <div class="spinner-grow text-{{ variant }}{{ size_class }}" role="status">
+    <span class="visually-hidden">{{ text }}</span>
+  </div>
+  {% if text %}
+  <p class="mt-2 text-muted small">{{ text }}</p>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro skeleton_card(lines=3, class="") %}
+<div class="card border-0 shadow-sm {{ class }}" aria-hidden="true">
+  <div class="card-body">
+    {% for i in range(lines) %}
+    <p class="placeholder-glow mb-2">
+      <span class="placeholder col-{% if loop.first %}12{% elif loop.last %}8{% else %}10{% endif %}"></span>
+    </p>
+    {% endfor %}
+  </div>
+</div>
+{% endmacro %}
+
+{% macro skeleton_table(rows=3, cols=4) %}
+<div aria-hidden="true">
+  {% for r in range(rows) %}
+  <div class="placeholder-glow mb-2 d-flex gap-3">
+    {% for c in range(cols) %}
+    <span class="placeholder col-{{ (12 / cols) | int }}"></span>
+    {% endfor %}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

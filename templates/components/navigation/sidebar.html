@@ -1,0 +1,84 @@
+{% macro sidebar(items, variant="success", brand="", brand_url="/", class="", collapsible=false, id="sidebar") %}
+{% set bg_map = {
+  "success": "bg-success text-white",
+  "dark": "bg-dark text-white",
+  "primary": "bg-primary text-white",
+  "eco": "bg-eco-deep text-white",
+  "white": "bg-white text-dark border-end"
+} %}
+{% set sidebar_class = bg_map.get(variant, "bg-success text-white") %}
+<aside class="col-md-3 col-lg-2 {{ sidebar_class }} {{ class }}" id="{{ id }}">
+  <div class="d-flex flex-column h-100">
+    {% if brand %}
+    <div class="p-3 border-bottom border-light border-opacity-25">
+      <a href="{{ brand_url }}" class="text-white text-decoration-none fw-bold d-flex align-items-center gap-2">
+        {% if collapsible %}
+        <i class="bi bi-list fs-5 d-md-none"></i>
+        {% endif %}
+        {{ brand }}
+      </a>
+    </div>
+    {% endif %}
+    {% set main_items = items | selectattr("bottom", "equalto", true) | list %}
+    {% set top_items = items | rejectattr("bottom", "equalto", true) | list %}
+    <ul class="nav nav-pills flex-column p-3 gap-1">
+      {% for item in top_items %}
+      {% set active = item.active or false %}
+      <li class="nav-item">
+        {% if item.divider %}
+        <hr class="my-2 border-light border-opacity-25">
+        {% elif item.header %}
+        <small class="text-white text-opacity-50 text-uppercase px-2 py-1 d-block fw-semibold">{{ item.label }}</small>
+        {% else %}
+        <a class="nav-link d-flex align-items-center gap-2
+           {% if active %}active bg-white text-success fw-semibold{% else %}text-white{% endif %}"
+           href="{{ item.url }}"
+           {% if active %}aria-current="page"{% endif %}>
+          {% if item.icon %}<i class="bi {{ item.icon }}"></i>{% endif %}
+          <span>{{ item.label }}</span>
+          {% if item.badge %}
+          <span class="badge bg-{{ item.badge_variant or 'danger' }} rounded-pill ms-auto">{{ item.badge }}</span>
+          {% endif %}
+        </a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% if main_items %}
+    <ul class="nav nav-pills flex-column p-3 gap-1 mt-auto">
+      {% for item in main_items %}
+      {% set active = item.active or false %}
+      <li class="nav-item">
+        {% if item.divider %}
+        <hr class="my-2 border-light border-opacity-25">
+        {% else %}
+        <a class="nav-link d-flex align-items-center gap-2
+           {% if active %}active bg-white text-success fw-semibold{% else %}text-white{% endif %}"
+           href="{{ item.url }}"
+           {% if active %}aria-current="page"{% endif %}>
+          {% if item.icon %}<i class="bi {{ item.icon }}"></i>{% endif %}
+          <span>{{ item.label }}</span>
+        </a>
+        {% endif %}
+      </li>
+      {% endfor %}
+    </ul>
+    {% endif %}
+  </div>
+</aside>
+{% endmacro %}
+
+{% macro sidebar_item(label, url, active=false, icon="", badge="", badge_variant="danger") %}
+<li class="nav-item">
+  <a class="nav-link d-flex align-items-center gap-2
+     {% if active %}active bg-white text-success fw-semibold{% else %}text-white{% endif %}"
+     href="{{ url }}"
+     {% if active %}aria-current="page"{% endif %}>
+    {% if icon %}<i class="bi {{ icon }}"></i>{% endif %}
+    <span>{{ label }}</span>
+    {% if badge %}
+    <span class="badge bg-{{ badge_variant }} rounded-pill ms-auto">{{ badge }}</span>
+    {% endif %}
+  </a>
+</li>
+{% endmacro %}

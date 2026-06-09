@@ -1,0 +1,28 @@
+{% macro empty_state(message="No hay datos disponibles.", icon="bi-inbox", title="", action_text="", action_url="", action_icon="", action_variant="primary", class="") %}
+<div class="text-center py-5 empty-state {{ class }}">
+  <div class="empty-state-icon mb-3">
+    <i class="bi {{ icon }} text-muted" style="font-size: 3.5rem; opacity: 0.5;"></i>
+  </div>
+  {% if title %}
+  <h5 class="text-muted mb-1">{{ title }}</h5>
+  {% endif %}
+  <p class="text-muted mb-0{% if action_text %} mb-3{% endif %}">{{ message }}</p>
+  {% if action_text and action_url %}
+  <a href="{{ action_url }}" class="btn btn-{{ action_variant }} mt-3">
+    {% if action_icon %}<i class="bi {{ action_icon }} me-1"></i>{% endif %}
+    {{ action_text }}
+  </a>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro empty_state_compact(message="Sin resultados.", icon="bi-search") %}
+<div class="text-center py-3">
+  <i class="bi {{ icon }} text-muted" style="font-size: 1.5rem;"></i>
+  <p class="text-muted small mb-0 mt-1">{{ message }}</p>
+</div>
+{% endmacro %}
+
+{% macro empty_error(message="Ocurrió un error al cargar los datos.", icon="bi-exclamation-triangle", action_text="Reintentar", action_url="#", action_variant="danger") %}
+{{ empty_state(message=message, icon=icon, title="Error", action_text=action_text, action_url=action_url, action_variant=action_variant) }}
+{% endmacro %}

@@ -1,0 +1,61 @@
+{% from "layouts/dashboard/dashboard_reciclador.html" import dashboard_reciclador %}
+{% from "components/ui/table.html" import table %}
+
+{% call dashboard_reciclador(title="Inicio") %}
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+          <h5 class="mb-0">Historial de Puntos</h5>
+        </div>
+        <div class="card-body">
+          {{ table(headers=["Motivo", "Puntos", "Fecha"], id="tabla-historial") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const tbody = document.getElementById('tabla-historial-body');
+  const token = EcoAPI.getToken();
+  if (!token) { window.location.href = '/login'; return; }
+
+  try {
+    const data = await EcoAPI.get('/reciclador/puntos/historial');
+    if (!data) return;
+
+    if (data.length === 0) {
+      tbody.innerHTML = `<tr><td colspan="3" class="text-center">
+        <div class="text-center py-3">
+          <i class="bi bi-inbox text-muted" style="font-size: 2rem;"></i>
+          <p class="mt-2 text-muted mb-0">No hay movimientos registrados.</p>
+        </div>
+      </td></tr>`;
+      return;
+    }
+
+    data.sort((a, b) => new Date(a.fecha) - new Date(b.fecha));
+
+    tbody.innerHTML = data.map(item => `
+      <tr>
+        <td>${item.motivo}</td>
+        <td class="${item.puntos >= 0 ? 'text-success fw-bold' : 'text-danger fw-bold'}">
+          ${item.puntos > 0 ? '+' : ''}${item.puntos}
+        </td>
+        <td>${new Date(item.fecha).toLocaleString('es-ES', { day: 'numeric', month: 'long', year: 'numeric', hour: '2-digit', minute: '2-digit' })}</td>
+      </tr>
+    `).join('');
+  } catch (error) {
+    console.error(error);
+    tbody.innerHTML = `<tr><td colspan="3" class="text-center text-danger py-3">
+      <i class="bi bi-exclamation-triangle me-1"></i> Error al cargar los datos.
+    </td></tr>`;
+  }
+});
+</script>
+
+{% endcall %}

@@ -1,0 +1,55 @@
+{% macro card(body="", header="", footer="", class="shadow-sm", header_class="", body_class="", footer_class="", hover=false, border=false) %}
+{% set hover_class = "card-hover" if hover else "" %}
+{% set border_class = "border" if border else "border-0" %}
+<div class="card {{ border_class }} {{ class }} {{ hover_class }}">
+  {% if header %}
+  <div class="card-header {{ header_class }}">{{ header }}</div>
+  {% endif %}
+  {% if body %}
+  <div class="card-body {{ body_class }}">{{ body | safe }}</div>
+  {% else %}
+  <div class="card-body {{ body_class }}">{{ caller() }}</div>
+  {% endif %}
+  {% if footer %}
+  <div class="card-footer {{ footer_class }}">{{ footer }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro card_hover(body="", class="shadow-sm", img="", img_alt="", img_height="180px", img_overlay=false, badge="", badge_variant="primary") %}
+<div class="card h-100 border-0 {{ class }}" style="transition: transform 0.2s, box-shadow 0.2s;">
+  {% if img %}
+  {% if img_overlay %}
+  <div class="card-img-overlay d-flex flex-column justify-content-end"
+       style="background: linear-gradient(transparent 60%, rgba(0,0,0,0.7));">
+    {% if badge %}
+    <span class="badge bg-{{ badge_variant }} align-self-start mb-auto">{{ badge }}</span>
+    {% endif %}
+    {% if body %}
+    <div class="text-white">{{ body | safe }}</div>
+    {% else %}
+    <div class="text-white">{{ caller() }}</div>
+    {% endif %}
+  </div>
+  {% endif %}
+  <img src="{{ img }}" class="card-img-top" style="height: {{ img_height }}; object-fit: cover;" alt="{{ img_alt }}">
+  {% endif %}
+  {% if not img_overlay %}
+  {% if body %}
+  <div class="card-body d-flex flex-column">{{ body | safe }}</div>
+  {% else %}
+  <div class="card-body d-flex flex-column">{{ caller() }}</div>
+  {% endif %}
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro card_group(cards, class="row g-4") %}
+<div class="{{ class }}">
+  {% for c in cards %}
+  <div class="{{ c.col_class or 'col-md-6 col-lg-4' }}">
+    {{ card(header=c.header, body=c.body, footer=c.footer, class=c.class or "shadow-sm", header_class=c.header_class, body_class=c.body_class, footer_class=c.footer_class) }}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

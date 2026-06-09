@@ -1,0 +1,93 @@
+{% macro modal(id, title, size="", centered=true, scrollable=false, fullscreen=false, backdrop="true", keyboard=true, class="") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label"
+     aria-hidden="true" data-bs-backdrop="{{ backdrop }}" data-bs-keyboard="{{ keyboard | lower }}">
+  <div class="modal-dialog
+    {% if size %}modal-{{ size }}{% endif %}
+    {% if centered %}modal-dialog-centered{% endif %}
+    {% if scrollable %}modal-dialog-scrollable{% endif %}
+    {% if fullscreen %}modal-fullscreen{% endif %}
+    {{ class }}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{ id }}-label">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Cerrar"></button>
+      </div>
+      <div class="modal-body" id="{{ id }}-body">
+        {{ caller() }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro modal_with_footer(id, title, size="", centered=true, scrollable=false, footer="") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label" aria-hidden="true">
+  <div class="modal-dialog {% if size %}modal-{{ size }}{% endif %} {% if centered %}modal-dialog-centered{% endif %} {% if scrollable %}modal-dialog-scrollable{% endif %}">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{ id }}-label">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body" id="{{ id }}-body">
+        {{ caller() }}
+      </div>
+      {% if footer %}
+      <div class="modal-footer" id="{{ id }}-footer">{{ footer }}</div>
+      {% endif %}
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro modal_confirm(id, title, message, confirm_text="Confirmar", confirm_variant="primary", cancel_text="Cancelar", confirm_id="") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{ id }}-label">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <p>{{ message }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">{{ cancel_text }}</button>
+        <button type="button" class="btn btn-{{ confirm_variant }} btn-sm" id="{{ confirm_id or id ~ '-confirm' }}">{{ confirm_text }}</button>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro modal_success(id, title="Operación Exitosa") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{ id }}-label">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-3">
+        {{ caller() }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro modal_error(id, title="Error") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1" aria-labelledby="{{ id }}-label" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-sm">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="{{ id }}-label">{{ title }}</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body text-center py-3">
+        <i class="bi bi-x-circle-fill text-danger" style="font-size: 3rem;"></i>
+        {{ caller() }}
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}

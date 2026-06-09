@@ -1,0 +1,50 @@
+{% macro select(label, name, options, id="", placeholder="Seleccionar...", required=false, disabled=false, multiple=false, selected_value="", class="", help_text="") %}
+{% set input_id = id or name %}
+<div class="mb-3">
+  {% if label %}
+  <label for="{{ input_id }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  {% endif %}
+  <select
+    class="form-select form-select-sm border-secondary-subtle py-2 {{ class }}"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if multiple %}multiple{% endif %}
+    style="background: #fafafa;">
+    {% if placeholder %}
+    <option value="" {% if not selected_value %}selected{% endif %} disabled>{{ placeholder }}</option>
+    {% endif %}
+    {% for opt in options %}
+    {% set is_selected = (selected_value == opt.value) or (selected_value == opt.label) %}
+    <option value="{{ opt.value }}" {% if is_selected %}selected{% endif %}>{{ opt.label }}</option>
+    {% endfor %}
+  </select>
+  {% if help_text %}
+  <div class="form-text">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro select_optgroup(label, name, groups, id="", placeholder="Seleccionar...", required=false, selected_value="") %}
+{% set input_id = id or name %}
+<div class="mb-3">
+  <label for="{{ input_id }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  <select
+    class="form-select form-select-sm border-secondary-subtle py-2"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    {% if required %}required{% endif %}
+    style="background: #fafafa;">
+    <option value="" {% if not selected_value %}selected{% endif %} disabled>{{ placeholder }}</option>
+    {% for group in groups %}
+    <optgroup label="{{ group.label }}">
+      {% for opt in group.options %}
+      {% set is_selected = selected_value == opt.value %}
+      <option value="{{ opt.value }}" {% if is_selected %}selected{% endif %}>{{ opt.label }}</option>
+      {% endfor %}
+    </optgroup>
+    {% endfor %}
+  </select>
+</div>
+{% endmacro %}

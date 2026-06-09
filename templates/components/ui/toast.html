@@ -1,0 +1,40 @@
+{% macro toast_container() %}
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container" style="z-index: 9999;"></div>
+{% endmacro %}
+
+{% macro toast_item(id, title, message, variant="primary", icon="bi-info-circle", delay="4000", placement="bottom-0 end-0") %}
+{% set icons = {
+  "success": "bi-check-circle-fill",
+  "danger": "bi-exclamation-triangle-fill",
+  "warning": "bi-exclamation-circle-fill",
+  "info": "bi-info-circle-fill",
+  "primary": "bi-bell-fill",
+  "secondary": "bi-gear-fill"
+} %}
+{% set final_icon = icon if icon.startswith("bi-") else icons.get(variant, "bi-info-circle") %}
+<div id="{{ id }}" class="toast text-bg-{{ variant }}" role="alert" aria-live="assertive" aria-atomic="true"
+     data-bs-delay="{{ delay }}">
+  <div class="toast-header text-bg-{{ variant }}">
+    <i class="bi {{ final_icon }} me-2"></i>
+    <strong class="me-auto">{{ title }}</strong>
+    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="toast" aria-label="Cerrar"></button>
+  </div>
+  <div class="toast-body">{{ message }}</div>
+</div>
+{% endmacro %}
+
+{% macro toast_success(id, title, message) %}
+{{ toast_item(id=id, title=title, message=message, variant="success", icon="bi-check-circle-fill") }}
+{% endmacro %}
+
+{% macro toast_error(id, title, message) %}
+{{ toast_item(id=id, title=title, message=message, variant="danger", icon="bi-exclamation-triangle-fill") }}
+{% endmacro %}
+
+{% macro toast_warning(id, title, message) %}
+{{ toast_item(id=id, title=title, message=message, variant="warning", icon="bi-exclamation-circle-fill") }}
+{% endmacro %}
+
+{% macro toast_info(id, title, message) %}
+{{ toast_item(id=id, title=title, message=message, variant="info", icon="bi-info-circle-fill") }}
+{% endmacro %}

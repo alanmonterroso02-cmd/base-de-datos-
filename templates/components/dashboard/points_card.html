@@ -1,0 +1,27 @@
+{% macro points_card(points, label="Puntos Disponibles", icon="bi-star-fill", variant="success", class="") %}
+{% set bg_map = {
+  "success": "bg-success text-white",
+  "primary": "bg-primary text-white",
+  "warning": "bg-warning text-dark",
+  "info": "bg-info text-dark",
+  "danger": "bg-danger text-white",
+  "dark": "bg-dark text-white"
+} %}
+<div class="card border-0 shadow-sm {{ bg_map.get(variant, 'bg-success text-white') }} {{ class }}">
+  <div class="card-body text-center py-4">
+    <i class="bi {{ icon }} fs-1"></i>
+    <h2 class="fw-bold mt-2 mb-0" id="points-card-value">{{ points }}</h2>
+    <p class="mb-0 small opacity-75">{{ label }}</p>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro points_mini(points, label="Puntos", icon="bi-star") %}
+<div class="d-flex align-items-center gap-2 bg-success bg-opacity-10 rounded-3 px-3 py-2">
+  <i class="bi {{ icon }} text-success"></i>
+  <div>
+    <strong class="text-success">{{ points }}</strong>
+    <small class="text-muted d-block">{{ label }}</small>
+  </div>
+</div>
+{% endmacro %}

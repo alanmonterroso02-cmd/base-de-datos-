@@ -1,0 +1,60 @@
+{% macro stat_card(value, label, icon="bi-activity", variant="primary", trend="", trend_value="", trend_icon="", class="") %}
+{% set bg_variants = {
+  "primary": "bg-primary",
+  "success": "bg-success",
+  "warning": "bg-warning text-dark",
+  "danger": "bg-danger",
+  "info": "bg-info text-dark",
+  "secondary": "bg-secondary",
+  "dark": "bg-dark"
+} %}
+{% set trends = {
+  "up": {"color": "success", "icon": "bi-arrow-up-short"},
+  "down": {"color": "danger", "icon": "bi-arrow-down-short"},
+  "neutral": {"color": "secondary", "icon": "bi-dash"}
+} %}
+{% set trend_data = trends.get(trend, {}) %}
+{% set trend_color = trend_data.get("color", "") %}
+{% set trend_icon = trend_data.get("icon", trend_icon) %}
+<div class="card border-0 shadow-sm stat-card {{ class }}">
+  <div class="card-body">
+    <div class="d-flex justify-content-between align-items-center">
+      <div>
+        <p class="text-muted mb-1 small text-uppercase fw-semibold">{{ label }}</p>
+        <h3 class="fw-bold mb-0 stat-value">{{ value }}</h3>
+        {% if trend and trend_value %}
+        <small class="text-{{ trend_color }} d-inline-flex align-items-center gap-1 mt-1">
+          <i class="bi {{ trend_icon }}"></i>
+          {{ trend_value }}
+        </small>
+        {% endif %}
+      </div>
+      <div class="{{ bg_variants.get(variant, 'bg-primary') }} rounded-3 p-3 d-flex align-items-center justify-content-center" style="width: 56px; height: 56px;">
+        <i class="bi {{ icon }} fs-3 text-white"></i>
+      </div>
+    </div>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro stat_card_simple(value, label, icon="bi-activity", color="primary") %}
+<div class="d-flex align-items-center gap-3 p-3 bg-white rounded-3 shadow-sm">
+  <div class="bg-{{ color }} bg-opacity-10 rounded-3 p-3">
+    <i class="bi {{ icon }} fs-4 text-{{ color }}"></i>
+  </div>
+  <div>
+    <h4 class="fw-bold mb-0">{{ value }}</h4>
+    <small class="text-muted">{{ label }}</small>
+  </div>
+</div>
+{% endmacro %}
+
+{% macro stat_row(stats) %}
+<div class="row g-3 mb-4">
+  {% for stat in stats %}
+  <div class="{{ stat.col_class or 'col-md-3 col-6' }}">
+    {{ stat_card(value=stat.value, label=stat.label, icon=stat.get('icon', 'bi-activity'), variant=stat.get('variant', 'primary'), trend=stat.get('trend', ''), trend_value=stat.get('trend_value', '')) }}
+  </div>
+  {% endfor %}
+</div>
+{% endmacro %}

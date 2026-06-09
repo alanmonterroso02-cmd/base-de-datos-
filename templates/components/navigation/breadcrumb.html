@@ -1,0 +1,34 @@
+{% macro breadcrumb(items, divider="/", class="") %}
+<nav aria-label="breadcrumb" class="{{ class }}">
+  <ol class="breadcrumb mb-0" style="--bs-breadcrumb-divider: '{{ divider }}';">
+    {% for item in items %}
+    <li class="breadcrumb-item {{ 'active' if loop.last }}" {% if loop.last %}aria-current="page"{% endif %}>
+      {% if item.url and not loop.last %}
+      <a href="{{ item.url }}" class="text-decoration-none">{{ item.label }}</a>
+      {% else %}
+      {{ item.label }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</nav>
+{% endmacro %}
+
+{% macro breadcrumb_with_icon(items) %}
+<nav aria-label="breadcrumb">
+  <ol class="breadcrumb mb-0">
+    <li class="breadcrumb-item">
+      <a href="/"><i class="bi bi-house-door"></i></a>
+    </li>
+    {% for item in items %}
+    <li class="breadcrumb-item {{ 'active' if loop.last }}" {% if loop.last %}aria-current="page"{% endif %}>
+      {% if item.url and not loop.last %}
+      <a href="{{ item.url }}" class="text-decoration-none">{{ item.label }}</a>
+      {% else %}
+      {{ item.label }}
+      {% endif %}
+    </li>
+    {% endfor %}
+  </ol>
+</nav>
+{% endmacro %}

@@ -1,0 +1,82 @@
+{% macro input_text(label, name, id="", placeholder="", value="", required=false, type="text", class="", help_text="", disabled=false, readonly=false, autocomplete="", pattern="") %}
+{% set input_id = id or name %}
+<div class="mb-3">
+  {% if label %}
+  <label for="{{ input_id }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  {% endif %}
+  <input
+    type="{{ type }}"
+    class="form-control form-control-sm border-secondary-subtle py-2 {{ class }}"
+    id="{{ input_id }}"
+    name="{{ name }}"
+    placeholder="{{ placeholder }}"
+    value="{{ value }}"
+    {% if required %}required{% endif %}
+    {% if disabled %}disabled{% endif %}
+    {% if readonly %}readonly{% endif %}
+    {% if autocomplete %}autocomplete="{{ autocomplete }}"{% endif %}
+    {% if pattern %}pattern="{{ pattern }}"{% endif %}
+    style="background: #fafafa;">
+  {% if help_text %}
+  <div class="form-text">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro input_hidden(name, value, id="") %}
+<input type="hidden" id="{{ id or name }}" name="{{ name }}" value="{{ value }}">
+{% endmacro %}
+
+{% macro input_email(label, name, id="", placeholder="correo@ejemplo.com", value="", required=false, help_text="") %}
+{{ input_text(label=label, name=name, id=id, placeholder=placeholder, value=value, required=required, type="email", autocomplete="email", help_text=help_text) }}
+{% endmacro %}
+
+{% macro input_password(label, name, id="", placeholder="········", required=false, help_text="") %}
+{{ input_text(label=label, name=name, id=id, placeholder=placeholder, required=required, type="password", autocomplete="current-password", help_text=help_text) }}
+{% endmacro %}
+
+{% macro input_number(label, name, id="", placeholder="", value="", required=false, min="", max="", step="", help_text="") %}
+{% set attrs = "" %}
+{% if min %} min="{{ min }}"{% endif %}
+{% if max %} max="{{ max }}"{% endif %}
+{% if step %} step="{{ step }}"{% endif %}
+<div class="mb-3">
+  <label for="{{ id or name }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  <input
+    type="number"
+    class="form-control form-control-sm border-secondary-subtle py-2"
+    id="{{ id or name }}"
+    name="{{ name }}"
+    placeholder="{{ placeholder }}"
+    value="{{ value }}"
+    {% if required %}required{% endif %}
+    {{ attrs | safe }}
+    style="background: #fafafa;">
+  {% if help_text %}
+  <div class="form-text">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro input_file(label, name, id="", accept="image/*", required=false, multiple=false, help_text="") %}
+<div class="mb-3">
+  {% if label %}
+  <label for="{{ id or name }}" class="form-label small fw-medium text-dark">{{ label }}{% if required %} <span class="text-danger">*</span>{% endif %}</label>
+  {% endif %}
+  <input
+    type="file"
+    class="form-control form-control-sm border-secondary-subtle"
+    id="{{ id or name }}"
+    name="{{ name }}"
+    accept="{{ accept }}"
+    {% if required %}required{% endif %}
+    {% if multiple %}multiple{% endif %}>
+  {% if help_text %}
+  <div class="form-text">{{ help_text }}</div>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro input_date(label, name, id="", value="", required=false, help_text="") %}
+{{ input_text(label=label, name=name, id=id, value=value, required=required, type="date", help_text=help_text) }}
+{% endmacro %}

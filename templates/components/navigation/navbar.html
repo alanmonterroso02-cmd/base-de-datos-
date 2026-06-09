@@ -1,0 +1,57 @@
+{% macro navbar(brand="EcoDesarrolladores", brand_url="/", nav_center="", nav_right="", variant="success", fixed="top", id="navbarContent", shadow=true, class="") %}
+{% set variant_map = {
+  "success": "bg-success navbar-dark",
+  "primary": "bg-primary navbar-dark",
+  "dark": "bg-dark navbar-dark",
+  "light": "bg-light navbar-light",
+  "white": "bg-white navbar-light"
+} %}
+{% set shadow_class = " shadow" if shadow else "" %}
+{% set fixed_class = " fixed-" ~ fixed if fixed else "" %}
+<nav class="navbar navbar-expand-md {{ variant_map.get(variant, 'bg-success navbar-dark') }}{{ shadow_class }}{{ fixed_class }} {{ class }}">
+  <div class="container-fluid">
+    <a class="navbar-brand fw-bold" href="{{ brand_url }}">
+      {% if caller %}{{ caller() }}{% else %}{{ brand }}{% endif %}
+    </a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+            data-bs-target="#{{ id }}" aria-controls="{{ id }}"
+            aria-expanded="false" aria-label="Abrir menú">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+    <div class="collapse navbar-collapse" id="{{ id }}">
+      <ul class="navbar-nav mx-auto mb-2 mb-md-0">{{ nav_center | safe }}</ul>
+      <div class="d-flex align-items-center gap-2">{{ nav_right | safe }}</div>
+    </div>
+  </div>
+</nav>
+{% if fixed == "top" %}<div style="padding-top: 56px;"></div>{% endif %}
+{% endmacro %}
+
+{% macro navbar_item(label, url, active=false, icon="", class="") %}
+<li class="nav-item">
+  <a class="nav-link {{ 'active' if active else '' }} {{ class }}" href="{{ url }}"
+     {% if active %}aria-current="page"{% endif %}>
+    {% if icon %}<i class="bi {{ icon }} me-1"></i>{% endif %}
+    {{ label }}
+  </a>
+</li>
+{% endmacro %}
+
+{% macro navbar_dropdown(label, items, icon="") %}
+<li class="nav-item dropdown">
+  <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+    {% if icon %}<i class="bi {{ icon }} me-1"></i>{% endif %}
+    {{ label }}
+  </a>
+  <ul class="dropdown-menu">
+    {% for item in items %}
+    <li>
+      <a class="dropdown-item" href="{{ item.url }}">
+        {% if item.icon %}<i class="bi {{ item.icon }} me-2"></i>{% endif %}
+        {{ item.label }}
+      </a>
+    </li>
+    {% endfor %}
+  </ul>
+</li>
+{% endmacro %}

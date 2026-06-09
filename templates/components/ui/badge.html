@@ -1,0 +1,50 @@
+{% macro badge(text, variant="secondary", pill=false, icon="", class="", size="") %}
+{% set size_class = "badge-" ~ size if size in ["sm", "lg"] else "" %}
+<span class="badge {{ 'rounded-pill' if pill else '' }} bg-{{ variant }} {{ size_class }} {{ class }}">
+  {% if icon %}<i class="bi {{ icon }} me-1"></i>{% endif %}
+  {{ text }}
+</span>
+{% endmacro %}
+
+{% macro badge_status(text, status="active") %}
+{% set status_map = {
+  "active": "success",
+  "inactive": "secondary",
+  "pending": "warning",
+  "used": "secondary",
+  "expired": "danger",
+  "vigente": "success",
+  "usado": "secondary",
+  "expirado": "danger",
+  "success": "success",
+  "danger": "danger",
+  "warning": "warning",
+  "info": "info",
+  "primary": "primary",
+  "secondary": "secondary"
+} %}
+{% set status_icons = {
+  "active": "bi-check-circle",
+  "inactive": "bi-x-circle",
+  "pending": "bi-clock",
+  "used": "bi-check2",
+  "expired": "bi-exclamation-triangle",
+  "vigente": "bi-check-circle",
+  "usado": "bi-check2-all",
+  "expirado": "bi-exclamation-triangle",
+  "success": "bi-check-circle",
+  "danger": "bi-x-circle",
+  "warning": "bi-exclamation-triangle",
+  "info": "bi-info-circle"
+} %}
+<span class="badge bg-{{ status_map.get(status, 'secondary') }} rounded-pill">
+  <i class="bi {{ status_icons.get(status, 'bi-circle') }} me-1"></i>
+  {{ text }}
+</span>
+{% endmacro %}
+
+{% macro badge_count(count, variant="primary", pill=true) %}
+{% if count > 0 %}
+<span class="badge bg-{{ variant }} {{ 'rounded-pill' if pill else '' }}">{{ count }}</span>
+{% endif %}
+{% endmacro %}

@@ -1,14 +1,278 @@
-@import url("app_colors.css");
-@import url("hero.css");
-@import url("components.css");
-@import url("navbar.css");
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+#carusel_info {
+  height: 100svh;
 }
 
-body{
-    background-color: var(--color-fondo);
+#carusel_info .carousel,
+#carusel_info .carousel-inner {
+  height: 100%;
+}
+
+#carusel_info .carousel-item {
+  height: 100%;
+  position: relative;
+  background-color: #1a3a2a;
+}
+
+#carusel_info .carousel-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+#carusel_info .carousel-item::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 1;
+}
+
+#carusel_info .carousel-caption {
+  z-index: 2;
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  left: 5%;
+  right: 5%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-top: 4rem;
+  text-align: center;
+  pointer-events: none;
+}
+
+#carusel_info .carousel-caption h1 {
+  font-size: clamp(1.4rem, 5vw, 3rem);
+  font-weight: 700;
+  margin-bottom: 0.75rem;
+  line-height: 1.2;
+}
+
+#carusel_info .carousel-caption p {
+  font-size: clamp(0.9rem, 3vw, 1.2rem);
+  max-width: 520px;
+  margin-bottom: 1.5rem;
+  opacity: 0.9;
+}
+
+#carusel_info .carousel-caption .btn {
+  padding: 0.6rem 2rem;
+  font-size: 1rem;
+  pointer-events: auto;
+}
+
+/* --- Eco-SaaS Design System --- */
+:root {
+  --eco-emerald: #10b981;
+  --eco-emerald-dark: #059669;
+  --eco-deep-sage: #064e3b;
+  --eco-soft-mint: #ecfdf5;
+  --eco-slate: #475569;
+  --eco-white: #ffffff;
+  --eco-bg-light: #f8fafc;
+}
+
+.bg-eco-deep {
+  background-color: var(--eco-deep-sage) !important;
+}
+.bg-eco-soft {
+  background-color: var(--eco-soft-mint) !important;
+}
+.text-eco-emerald {
+  color: var(--eco-emerald) !important;
+}
+.text-eco-slate {
+  color: var(--eco-slate) !important;
+}
+
+.card-eco {
+  border: none;
+  border-radius: 1rem;
+  box-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1),
+    0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+  background: var(--eco-white);
+}
+
+.card-eco:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+}
+
+.btn-eco-primary {
+  background: linear-gradient(
+    135deg,
+    var(--eco-emerald),
+    var(--eco-emerald-dark)
+  );
+  border: none;
+  color: white;
+  font-weight: 500;
+  transition: opacity 0.2s ease;
+}
+
+.btn-eco-primary:hover {
+  opacity: 0.9;
+  color: white;
+}
+
+.table-eco {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.table-eco thead th {
+  background-color: var(--eco-bg-light);
+  color: var(--eco-slate);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+  letter-spacing: 0.05em;
+  border: none;
+}
+
+.table-eco tbody tr {
+  transition: background-color 0.2s ease;
+}
+
+.table-eco tbody tr:hover {
+  background-color: var(--eco-soft-mint) !important;
+}
+
+.sidebar-eco {
+  background-color: var(--eco-deep-sage);
+  min-height: 100vh;
+}
+
+.sidebar-eco .nav-link {
+  color: rgba(255, 255, 255, 0.7);
+  transition: all 0.2s ease;
+  border-left: 4px solid transparent;
+  padding: 0.75rem 1rem;
+}
+
+.sidebar-eco .nav-link:hover,
+.sidebar-eco .nav-link.active {
+  color: white;
+  background: rgba(255, 255, 255, 0.1);
+  border-left-color: var(--eco-emerald);
+}
+
+/* ─── Component Library Styles ─── */
+
+/* Card Hover Effect */
+.card-hover {
+  transition:
+    transform 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.card-hover:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1) !important;
+}
+
+/* Stat Card */
+.stat-card .stat-value {
+  font-size: 1.75rem;
+  line-height: 1.2;
+}
+
+/* Empty State */
+.empty-state-icon {
+  transition: transform 0.3s ease;
+}
+.empty-state:hover .empty-state-icon {
+  transform: scale(1.1);
+}
+
+/* Alert Animation */
+.alert-animated {
+  animation: alertSlideIn 0.3s ease-out;
+}
+@keyframes alertSlideIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Toast Stacking */
+.toast-container .toast {
+  margin-bottom: 0.5rem;
+}
+
+/* Page Transition */
+main {
+  animation: fadeIn 0.2s ease-out;
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Sidebar Responsive */
+@media (max-width: 767.98px) {
+  .sidebar-eco,
+  aside[class*="col-md-3"] {
+    position: fixed;
+    z-index: 1040;
+    width: 280px;
+    height: 100vh;
+    transform: translateX(-100%);
+    transition: transform 0.3s ease;
+  }
+  .sidebar-eco.show,
+  aside[class*="col-md-3"].show {
+    transform: translateX(0);
+  }
+}
+
+/* Badge Hover Effect */
+.badge {
+  transition: opacity 0.2s ease;
+}
+a:hover .badge {
+  opacity: 0.85;
+}
+
+/* Smooth Spinner */
+.spinner-border,
+.spinner-grow {
+  animation-duration: 0.75s;
+}
+
+/* Form Consistency */
+.form-control:focus,
+.form-select:focus {
+  border-color: var(--eco-emerald);
+  box-shadow: 0 0 0 0.2rem rgba(16, 185, 129, 0.15);
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.15);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.25);
 }

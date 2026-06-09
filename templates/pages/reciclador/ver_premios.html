@@ -1,0 +1,122 @@
+{% from "layouts/dashboard/dashboard_reciclador.html" import dashboard_reciclador %}
+{% from "components/ui/spinner.html" import spinner %}
+{% from "components/ui/modal.html" import modal_success %}
+
+{% call modal_success(id="cuponModal", title="Canje Exitoso") %}
+  <p id="cupon-mensaje" class="mt-3 mb-1 fw-semibold"></p>
+  <p class="small text-muted mb-2">Tu c\u00f3digo de canje:</p>
+  <div class="bg-light border rounded p-3 mb-3">
+    <code id="cupon-codigo" class="fs-4 fw-bold text-success"></code>
+  </div>
+  <p class="small text-muted mb-0">
+    V\u00e1lido hasta: <span id="cupon-expiracion"></span>
+  </p>
+  <p class="small text-muted mb-0">
+    Puntos restantes: <span id="cupon-puntos-restantes" class="fw-bold"></span>
+  </p>
+{% endcall %}
+
+{% call dashboard_reciclador(title="Premios Disponibles") %}
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+          <h5 class="mb-0">Premios para Canjear</h5>
+          <span id="mis-puntos" class="badge bg-light text-dark fs-6 px-3 py-2">-- pts</span>
+        </div>
+        <div class="card-body">
+          <div class="row g-4" id="premios-grid">
+            {{ spinner(text="Cargando premios disponibles...") }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', async () => {
+  const grid = document.getElementById('premios-grid');
+  const puntosBadge = document.getElementById('mis-puntos');
+  const token = EcoAPI.getToken();
+  if (!token) { window.location.href = '/login'; return; }
+
+  async function cargarPremios() {
+    try {
+      const premios = await EcoAPI.get('/premios/form');
+      if (!premios) return;
+
+      if (premios.length === 0) {
+        grid.innerHTML = `
+          <div class="col-12">
+            <div class="text-center py-5 text-muted">
+              <i class="bi bi-gift" style="font-size: 3rem;"></i>
+              <p class="mt-2">No hay premios disponibles en este momento.</p>
+            </div>
+          </div>`;
+        return;
+      }
+
+      grid.innerHTML = premios.map(p => `
+        <div class="col-md-6 col-lg-4">
+          <div class="card h-100 shadow-sm">
+            <img src="${p.imagen || '/static/img/default-premio.png'}"
+                 class="card-img-top" style="height: 180px; object-fit: cover;"
+                 alt="${p.nombre}">
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">${p.nombre}</h5>
+              <p class="card-text small text-muted flex-grow-1">${p.descripcion || 'Sin descripci\u00f3n'}</p>
+              <div class="d-flex justify-content-between align-items-center mt-2">
+                <span class="badge bg-warning text-dark fs-6">${p.costo_puntos} pts</span>
+                <small class="text-muted">Stock: ${p.stock}</small>
+              </div>
+              <button class="btn btn-success mt-3 canjear-btn"
+                      data-id="${p.id}"
+                      data-nombre="${p.nombre}"
+                      ${p.stock < 1 ? 'disabled' : ''}>
+                ${p.stock < 1 ? 'Sin stock' : 'Canjear'}
+              </button>
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      document.querySelectorAll('.canjear-btn:not([disabled])').forEach(btn => {
+        btn.addEventListener('click', () => canjearPremio(btn));
+      });
+    } catch (error) {
+      console.error(error);
+      grid.innerHTML = '<div class="col-12"><div class="text-center py-5 text-danger">Error al cargar premios.</div></div>';
+    }
+  }
+
+  async function canjearPremio(btn) {
+    btn.disabled = true;
+    btn.textContent = 'Canjeando...';
+    try {
+      const data = await EcoAPI.post('/premios/' + btn.dataset.id + '/canjear');
+      document.getElementById('cupon-mensaje').textContent = data.mensaje;
+      document.getElementById('cupon-codigo').textContent = data.cupon.codigo;
+      document.getElementById('cupon-expiracion').textContent =
+        new Date(data.cupon.fecha_expiracion).toLocaleDateString();
+      document.getElementById('cupon-puntos-restantes').textContent =
+        data.puntos_restantes + ' pts';
+      puntosBadge.textContent = data.puntos_restantes + ' pts';
+      const modal = new bootstrap.Modal(document.getElementById('cuponModal'));
+      modal.show();
+      btn.closest('.card').remove();
+    } catch (error) {
+      console.error(error);
+      EcoToast.error(error.message || 'Error al canjear el premio');
+      btn.disabled = false;
+      btn.textContent = 'Canjear';
+    }
+  }
+
+  cargarPremios();
+});
+</script>
+
+{% endcall %}

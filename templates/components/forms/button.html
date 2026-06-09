@@ -1,0 +1,50 @@
+{% macro btn(text, type="submit", variant="dark", outline=false, url="", class="", size="sm", icon="", loading_text="", block=true, disabled=false, extra="") %}
+{% set btn_class = "btn btn-%s%s btn-%s py-2 fw-medium" | format("outline-" if outline else "", variant, size) %}
+{% set btn_class = btn_class ~ " w-100" if block else btn_class %}
+{% set btn_class = btn_class ~ " " ~ class %}
+
+{% if url %}
+<a href="{{ url }}" class="{{ btn_class }}" {% if disabled %}aria-disabled="true" tabindex="-1"{% endif %} {{ extra | safe }}>
+  {% if icon %}<i class="bi {{ icon }} me-1"></i>{% endif %}
+  {{ text }}
+</a>
+{% else %}
+<button type="{{ type }}" class="{{ btn_class }}" {% if disabled %}disabled{% endif %} {{ extra | safe }}>
+  {% if icon %}<i class="bi {{ icon }} me-1"></i>{% endif %}
+  <span class="btn-text">{{ text }}</span>
+  {% if loading_text %}<span class="btn-loading d-none"><span class="spinner-border spinner-border-sm me-1"></span>{{ loading_text }}</span>{% endif %}
+</button>
+{% endif %}
+{% endmacro %}
+
+{% macro btn_primary(text, type="submit", url="", class="", size="sm", block=true, icon="") %}
+{{ btn(text=text, type=type, variant="primary", url=url, class=class, size=size, block=block, icon=icon) }}
+{% endmacro %}
+
+{% macro btn_success(text, type="submit", url="", class="", size="sm", block=true, icon="") %}
+{{ btn(text=text, type=type, variant="success", url=url, class=class, size=size, block=block, icon=icon) }}
+{% endmacro %}
+
+{% macro btn_danger(text, type="submit", url="", class="", size="sm", block=true, icon="") %}
+{{ btn(text=text, type=type, variant="danger", url=url, class=class, size=size, block=block, icon=icon) }}
+{% endmacro %}
+
+{% macro btn_outline(text, url="", type="button", variant="secondary", class="", size="sm", block=true) %}
+{{ btn(text=text, type=type, variant=variant, outline=true, url=url, class=class, size=size, block=block) }}
+{% endmacro %}
+
+{% macro btn_icon(icon, text="", variant="light", size="sm", url="", type="button", class="") %}
+<{% if url %}a href="{{ url }}"{% else %}button type="{{ type }}"{% endif %}
+   class="btn btn-{{ variant }} btn-{{ size }} {{ class }}"
+   {% if not url %}type="{{ type }}"{% endif %}>
+  <i class="bi {{ icon }}{% if text %} me-1{% endif %}"></i>{% if text %} {{ text }}{% endif %}
+</{% if url %}a{% else %}button{% endif %}>
+{% endmacro %}
+
+{% macro btn_group(buttons, class="", vertical=false) %}
+<div class="btn-group{% if vertical %}-vertical{% endif %} {{ class }}" role="group">
+  {% for btn_data in buttons %}
+  {{ btn(**btn_data) }}
+  {% endfor %}
+</div>
+{% endmacro %}

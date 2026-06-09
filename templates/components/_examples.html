@@ -1,0 +1,418 @@
+{#
+  ============================================================================
+  COMPONENT LIBRARY — EcoDesarrolladores
+  ============================================================================
+  Esta plantilla documenta el uso de todos los componentes disponibles.
+
+  Cada sección incluye:
+    - Descripción del componente
+    - Parámetros disponibles
+    - Ejemplo de uso
+  ============================================================================
+#}
+
+{#
+  ────────────────────────────────────────────
+  FORMS
+  ────────────────────────────────────────────
+#}
+
+{#
+  ## input_text
+  Renderiza un campo de texto.
+
+  Parámetros:
+    - label (str): Etiqueta del campo
+    - name (str): Nombre del input (usa como id si no se provee id)
+    - id (str, opcional): ID personalizado
+    - placeholder (str, opcional): Texto de placeholder
+    - value (str, opcional): Valor por defecto
+    - required (bool, opcional): Marca el campo como requerido
+    - type (str, opcional): Tipo de input (text, email, password, etc.)
+    - class (str, opcional): Clases adicionales
+    - help_text (str, opcional): Texto de ayuda debajo del input
+    - disabled (bool, opcional): Deshabilita el input
+    - readonly (bool, opcional): Hace el input readonly
+    - autocomplete (str, opcional): Valor del atributo autocomplete
+    - pattern (str, opcional): Patrón de validación regex
+
+  Uso:
+    {% from "components/forms/input.html" import input_text %}
+    {{ input_text(label="Correo", name="email", type="email", required=true) }}
+#}
+
+{#
+  ## btn
+  Renderiza un botón o link con estilo de botón.
+
+  Parámetros:
+    - text (str): Texto del botón
+    - type (str): "submit", "button", o "reset"
+    - variant (str): success, primary, dark, danger, warning, info, secondary, light
+    - outline (bool): Variante outline
+    - url (str, opcional): Si se provee, renderiza un <a> en lugar de <button>
+    - class (str): Clases adicionales
+    - size (str): sm, md, lg
+    - icon (str): Clase del icono Bootstrap (ej: "bi-check")
+    - loading_text (str, opcional): Texto durante estado de carga
+    - block (bool): w-100 por defecto
+    - disabled (bool): Deshabilita el botón
+    - extra (str): Atributos HTML adicionales
+
+  Uso:
+    {% from "components/forms/button.html" import btn, btn_primary, btn_danger %}
+    {{ btn(text="Guardar", variant="success") }}
+    {{ btn_primary(text="Enviar", icon="bi-send") }}
+#}
+
+{#
+  ────────────────────────────────────────────
+  UI COMPONENTS
+  ────────────────────────────────────────────
+#}
+
+{#
+  ## alert
+  Renderiza una alerta contextual.
+
+  Parámetros:
+    - message (str): Mensaje a mostrar
+    - variant (str): success, danger, warning, info, primary, secondary, light, dark
+    - dismissible (bool): Botón para cerrar
+    - icon (bool): Muestra icono según variant
+    - class (str): Clases adicionales
+    - heading (str): Título opcional
+
+  Uso:
+    {% from "components/ui/alert.html" import alert_success, alert_error %}
+    {{ alert_success("Operación completada") }}
+    {{ alert_error("Error al procesar", heading="Error crítico") }}
+#}
+
+{#
+  ## toast
+  Sistema de toasts. Se incluye automáticamente en layouts/pagina_publica.html.
+
+  Uso desde JS:
+    EcoToast.success("Mensaje de éxito");
+    EcoToast.error("Mensaje de error");
+    EcoToast.warning("Mensaje de advertencia");
+    EcoToast.info("Mensaje informativo");
+
+  Uso desde Jinja:
+    {% from "components/ui/toast.html" import toast_item %}
+    {{ toast_item(id="toast-1", title="Éxito", message="Guardado", variant="success") }}
+#}
+
+{#
+  ## modal
+  Renderiza un modal con body opcional via caller.
+
+  Parámetros:
+    - id (str): ID único del modal
+    - title (str): Título del modal
+    - size (str): sm, lg, xl
+    - centered (bool): Centrado vertical
+    - scrollable (bool): Scroll interno
+    - fullscreen (bool): Modal fullscreen
+    - backdrop (str): "true", "false", "static"
+    - keyboard (bool): Cerrar con tecla ESC
+
+  Uso:
+    {% from "components/ui/modal.html" import modal, modal_confirm %}
+    {% call modal(id="miModal", title="Confirmar", size="sm") %}
+      <p>¿Estás seguro?</p>
+    {% endcall %}
+
+    {% call modal_confirm(id="deleteModal", title="Eliminar",
+      message="¿Eliminar este registro?", confirm_variant="danger") %}
+    {% endcall %}
+#}
+
+{#
+  ## card
+  Renderiza una tarjeta Bootstrap.
+
+  Parámetros:
+    - body (str): Contenido del body (alternativa a caller)
+    - header (str): Cabecera
+    - footer (str): Footer
+    - class (str): Clases adicionales
+    - hover (bool): Efecto hover
+    - border (bool): Muestra borde
+
+  Uso:
+    {% from "components/ui/card.html" import card, card_hover %}
+    {% call card(header="Título") %}
+      <p>Contenido</p>
+    {% endcall %}
+    {{ card_hover(img="/img.jpg", body="<p>Texto</p>") }}
+#}
+
+{#
+  ## stat_card
+  Tarjeta de estadística para dashboards.
+
+  Parámetros:
+    - value (str): Valor numérico
+    - label (str): Etiqueta
+    - icon (str): Icono Bootstrap
+    - variant (str): primary, success, warning, danger, info
+    - trend (str): "up", "down", "neutral"
+    - trend_value (str): Texto de la tendencia
+
+  Uso:
+    {% from "components/ui/stat_card.html" import stat_card %}
+    {{ stat_card(value="1,234", label="Usuarios", icon="bi-people", variant="primary") }}
+#}
+
+{#
+  ## table
+  Tabla con carga remota vía JS.
+
+  Parámetros:
+    - headers (list): Lista de títulos de columnas
+    - id (str): ID para el tbody (se renderiza #id-body)
+    - class (str): Clases adicionales
+    - responsive (bool): Wrapper responsivo
+    - striped (bool): Filas alternadas
+    - hover (bool): Efecto hover
+
+  Uso:
+    {% from "components/ui/table.html" import table %}
+    {{ table(headers=["Nombre", "Email", "Rol"], id="usuarios-table") }}
+    // Luego en JS: document.getElementById("usuarios-table-body").innerHTML = ...
+#}
+
+{#
+  ## empty_state
+  Estado vacío cuando no hay datos.
+
+  Parámetros:
+    - message (str): Mensaje informativo
+    - icon (str): Icono Bootstrap
+    - title (str): Título opcional
+    - action_text (str): Texto del botón
+    - action_url (str): URL del botón
+
+  Uso:
+    {% from "components/ui/empty_state.html" import empty_state %}
+    {{ empty_state(message="No hay registros", icon="bi-inbox",
+       action_text="Crear", action_url="/crear") }}
+#}
+
+{#
+  ## spinner
+  Indicador de carga.
+
+  Parámetros:
+    - text (str): Texto descriptivo
+    - variant (str): Color Bootstrap
+    - size (str): "" por defecto, "sm" para pequeño
+    - type (str): "border" o "grow"
+
+  Uso:
+    {% from "components/ui/spinner.html" import spinner, spinner_inline %}
+    {{ spinner(text="Cargando...") }}
+    {{ spinner_inline(text="Procesando") }}
+#}
+
+{#
+  ## badge
+  Badge o etiqueta.
+
+  Parámetros:
+    - text (str): Texto
+    - variant (str): Color Bootstrap
+    - pill (bool): Estilo pill
+    - icon (str): Icono Bootstrap
+    - size (str): "sm" o "lg"
+
+  Uso:
+    {% from "components/ui/badge.html" import badge, badge_status %}
+    {{ badge(text="Activo", variant="success", pill=true) }}
+    {{ badge_status(text="Vigente", status="vigente") }}
+#}
+
+{#
+  ## pagination
+  Paginación Bootstrap.
+
+  Parámetros:
+    - current (int): Página actual
+    - total (int): Total de páginas
+    - base_url (str): URL base para los links
+    - query_param (str): Nombre del parámetro de página
+    - size (str): sm, lg
+    - align (str): start, center, end
+
+  Uso:
+    {% from "components/ui/pagination.html" import pagination %}
+    {{ pagination(current=2, total=10, base_url="/admin/usuarios") }}
+#}
+
+{#
+  ────────────────────────────────────────────
+  NAVIGATION
+  ────────────────────────────────────────────
+#}
+
+{#
+  ## navbar
+  Barra de navegación responsiva.
+
+  Parámetros:
+    - brand (str): Nombre de la marca
+    - brand_url (str): URL del logo/marca
+    - nav_center (str): HTML para items centrales
+    - nav_right (str): HTML para items derecha
+    - variant (str): success, primary, dark, light
+    - fixed (str): "top" o ""
+
+  Uso:
+    {% from "components/navigation/navbar.html" import navbar %}
+    {{ navbar(brand="App", nav_center='<li class="nav-item">...</li>') }}
+#}
+
+{#
+  ## sidebar
+  Sidebar para dashboards.
+
+  Parámetros:
+    - items (list): Lista de dicts con label, url, icon, active
+    - variant (str): success, dark, primary
+    - brand (str): Texto del branding
+    - brand_url (str): URL del branding
+
+  Uso:
+    {% from "components/navigation/sidebar.html" import sidebar %}
+    {{ sidebar(items=nav_items, variant="dark", brand="Admin") }}
+#}
+
+{#
+  ## breadcrumb
+  Migas de pan.
+
+  Parámetros:
+    - items (list): Lista de dicts con label, url
+    - divider (str): Caracter separador
+
+  Uso:
+    {% from "components/navigation/breadcrumb.html" import breadcrumb %}
+    {{ breadcrumb(items=[{"label": "Inicio", "url": "/"}, {"label": "Usuarios"}]) }}
+#}
+
+{#
+  ────────────────────────────────────────────
+  DASHBOARD
+  ────────────────────────────────────────────
+#}
+
+{#
+  ## profile_header
+  Encabezado de perfil para navbar del dashboard.
+
+  Parámetros:
+    - name_id (str): ID del elemento del nombre
+    - points_id (str): ID del elemento de puntos
+    - avatar (str): URL del avatar
+    - show_points (bool): Muestra contador de puntos
+
+  Uso:
+    {% from "components/dashboard/profile_header.html" import profile_header %}
+    {{ profile_header(name_id="user-name", points_id="user-points") }}
+#}
+
+{#
+  ## points_card
+  Tarjeta de visualización de puntos.
+
+  Parámetros:
+    - points (str): Valor de puntos
+    - label (str): Etiqueta
+    - icon (str): Icono Bootstrap
+    - variant (str): success, primary, warning
+
+  Uso:
+    {% from "components/dashboard/points_card.html" import points_card %}
+    {{ points_card(points="1,500", label="Puntos Acumulados") }}
+#}
+
+{#
+  ## activity_card
+  Contenedor de actividad con caller.
+
+  Parámetros:
+    - title (str): Título
+    - subtitle (str): Subtítulo
+    - icon (str): Icono Bootstrap
+    - variant (str): primary, success, warning, info, danger
+
+  Uso:
+    {% from "components/dashboard/activity_card.html" import activity_card %}
+    {% call activity_card(title="Actividad Reciente", icon="bi-clock") %}
+      <p>Contenido de actividad...</p>
+    {% endcall %}
+#}
+
+{#
+  ────────────────────────────────────────────
+  LAYOUTS
+  ────────────────────────────────────────────
+#}
+
+{#
+  ## pagina_publica
+  Layout base para todas las páginas públicas.
+
+  Parámetros:
+    - title (str): Título de la página (se renderiza como "Título | EcoDesarrolladores")
+    - description (str): Meta descripción
+    - extra_head (str): HTML adicional en <head>
+
+  Uso:
+    {% from "layouts/pagina_publica.html" import pagina_publica %}
+    {% call pagina_publica("Mi Página", description="Descripción") %}
+      <p>Contenido</p>
+    {% endcall %}
+#}
+
+{#
+  ## dashboard_reciclador
+  Layout para dashboard del reciclador.
+
+  Parámetros:
+    - title (str): Título de la página
+    - content (str): HTML del contenido principal
+    Carga automáticamente el perfil vía /reciclador/perfil
+
+  Uso:
+    {% from "layouts/dashboard/dashboard_reciclador.html" import dashboard_reciclador %}
+    {{ dashboard_reciclador(title="Inicio", content="<p>Bienvenido</p>") }}
+#}
+
+{#
+  ## dashboard_admin
+  Layout para dashboard del administrador.
+
+  Parámetros:
+    - title (str): Título de la página
+    - content (str): HTML del contenido principal
+
+  Uso:
+    {% from "layouts/dashboard/dashboard_admin.html" import dashboard_admin %}
+    {{ dashboard_admin(title="Dashboard", content="<p>Admin panel</p>") }}
+#}
+
+{#
+  ## dashboard_usuario
+  Layout para dashboard del colaborador/usuario.
+
+  Parámetros:
+    - title (str): Título de la página
+    - content (str): HTML del contenido principal
+
+  Uso:
+    {% from "layouts/dashboard/dashboard_usuario.html" import dashboard_usuario %}
+    {{ dashboard_usuario(title="Inicio", content="<p>Panel colaborador</p>") }}
+#}

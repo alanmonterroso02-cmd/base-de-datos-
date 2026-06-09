@@ -31,3 +31,27 @@ def agregar_puntos(
     service = RecicladorService(session)
 
     return service.agregar_puntos(reciclador["nit"], data)
+
+@reciclador_router.get("/perfil")
+def ver_perfil(
+    reciclador=Depends(get_current_reciclador),
+    session: Session = Depends(get_session),
+):
+    service = RecicladorService(session)
+    return service.ver_perfil(reciclador["nit"])
+
+@reciclador_router.get("/puntos/historial")
+def ver_historial_puntos(
+    reciclador=Depends(get_current_reciclador),
+    session: Session = Depends(get_session),
+):
+    service = RecicladorService(session)
+    return service.ver_historial_puntos(reciclador["nit"])
+
+@reciclador_router.get("/cupones")
+def ver_cupones(
+    reciclador=Depends(get_current_reciclador),
+    session: Session = Depends(get_session),
+):
+    service = RecicladorService(session)
+    return service.listar_cupones(reciclador["nit"])

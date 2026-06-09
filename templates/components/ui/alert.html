@@ -1,0 +1,41 @@
+{% macro alert(message, variant="info", dismissible=true, icon=true, class="", heading="", animated=true) %}
+{% set icons = {
+  "success": "bi-check-circle-fill",
+  "danger": "bi-exclamation-triangle-fill",
+  "warning": "bi-exclamation-circle-fill",
+  "info": "bi-info-circle-fill",
+  "primary": "bi-bell-fill",
+  "secondary": "bi-gear-fill",
+  "light": "bi-sun-fill",
+  "dark": "bi-moon-fill"
+} %}
+<div class="alert alert-{{ variant }} d-flex align-items-start gap-2 {{ 'alert-dismissible fade show' if dismissible else '' }} {{ 'alert-animated' if animated else '' }} {{ class }}"
+     role="alert">
+  {% if icon %}
+  <i class="bi {{ icons.get(variant, 'bi-info-circle-fill') }} fs-5 mt-1 flex-shrink-0"></i>
+  {% endif %}
+  <div class="flex-grow-1">
+    {% if heading %}<strong class="d-block">{{ heading }}</strong>{% endif %}
+    <div>{{ message }}</div>
+  </div>
+  {% if dismissible %}
+  <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Cerrar"></button>
+  {% endif %}
+</div>
+{% endmacro %}
+
+{% macro alert_success(message, dismissible=true, heading="") %}
+{{ alert(message=message, variant="success", dismissible=dismissible, heading=heading) }}
+{% endmacro %}
+
+{% macro alert_error(message, dismissible=true, heading="") %}
+{{ alert(message=message, variant="danger", dismissible=dismissible, heading=heading) }}
+{% endmacro %}
+
+{% macro alert_warning(message, dismissible=true, heading="") %}
+{{ alert(message=message, variant="warning", dismissible=dismissible, heading=heading) }}
+{% endmacro %}
+
+{% macro alert_info(message, dismissible=true, heading="") %}
+{{ alert(message=message, variant="info", dismissible=dismissible, heading=heading) }}
+{% endmacro %}

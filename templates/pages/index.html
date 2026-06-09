@@ -1,6 +1,64 @@
-{% from "layouts/pagina_publica.html" import pagina_publica %} {% from
-"components/app_var.html" import app_nav %} {% call pagina_publica("Eco
-Desarrolladores") %} {{ app_nav( nav_center="
-<li><a href="#proyectos">Proyectos</a></li>
-<li><a href="#about">Acerca</a></li>
-", nav_right="<a href="/create" class="btn-nav">Unirse</a>" ) }} {% endcall %}
+{% from "layouts/pagina_publica.html" import pagina_publica %}
+{% from "components/navigation/navbar.html" import navbar %}
+
+{% call pagina_publica("EcoDesarrolladores") %}
+
+{{ navbar(
+   brand="EcoDesarrolladores",
+   variant="success",
+   nav_center='
+   <li class="nav-item">
+      <a class="nav-link" href="#proyectos">Proyectos</a>
+   </li>
+   <li class="nav-item">
+      <a class="nav-link" href="#about">Acerca</a>
+   </li>
+   ',
+   nav_right='
+   <a href="/login" class="btn btn-outline-light btn-sm">Iniciar Sesión</a>
+   '
+) }}
+
+<div id="carusel_info" class="carousel slide" data-bs-ride="carousel">
+  <div class="carousel-indicators">
+    <button type="button" data-bs-target="#carusel_info" data-bs-slide-to="0" class="active" aria-current="true" aria-label="Slide 1"></button>
+    <button type="button" data-bs-target="#carusel_info" data-bs-slide-to="1" aria-label="Slide 2"></button>
+    <button type="button" data-bs-target="#carusel_info" data-bs-slide-to="2" aria-label="Slide 3"></button>
+  </div>
+  <div class="carousel-inner">
+    <div class="carousel-item active">
+      <img src="/static/uploads/premios/0e0ab683-4e4b-4254-b169-80bc9814e6cd.png" alt="Eco Desarrolladores">
+      <div class="carousel-caption">
+        <h1>Eco Desarrolladores</h1>
+        <p>Tecnología para construir un futuro sostenible mediante innovación y desarrollo responsable.</p>
+        <a href="/create" class="btn btn-primary btn-lg">Unirse ahora</a>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="/static/uploads/premios/0e0ab683-4e4b-4254-b169-80bc9814e6cd.png" alt="Proyectos Ambientales">
+      <div class="carousel-caption">
+        <h1>Proyectos Ambientales</h1>
+        <p>Creamos plataformas y herramientas tecnológicas para impulsar iniciativas ecológicas.</p>
+        <a href="#proyectos" class="btn btn-primary btn-lg">Ver proyectos</a>
+      </div>
+    </div>
+    <div class="carousel-item">
+      <img src="/static/uploads/premios/0e0ab683-4e4b-4254-b169-80bc9814e6cd.png" alt="Únete a la Comunidad">
+      <div class="carousel-caption">
+        <h1>Únete a la Comunidad</h1>
+        <p>Comparte ideas, aprende nuevas tecnologías y contribuye al cambio positivo.</p>
+        <a href="/create" class="btn btn-primary btn-lg">Comenzar</a>
+      </div>
+    </div>
+  </div>
+  <button class="carousel-control-prev" type="button" data-bs-target="#carusel_info" data-bs-slide="prev">
+    <span class="carousel-control-prev-icon"></span>
+    <span class="visually-hidden">Anterior</span>
+  </button>
+  <button class="carousel-control-next" type="button" data-bs-target="#carusel_info" data-bs-slide="next">
+    <span class="carousel-control-next-icon"></span>
+    <span class="visually-hidden">Siguiente</span>
+  </button>
+</div>
+
+{% endcall %}
