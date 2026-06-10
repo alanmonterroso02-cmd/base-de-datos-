@@ -1,0 +1,91 @@
+{% from "layouts/dashboard/dashboard_admin.html" import dashboard_admin %}
+{% from "components/admin/page_header.html" import page_header %}
+{% from "components/admin/modal_form.html" import modal_form %}
+
+{% call dashboard_admin(title="Categorías") %}
+
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm">
+    {{ page_header(title="Gestión de Categorías de Reciclaje", buttons=[
+      {"label": "Nueva Categoría", "modal": "crearModal", "icon": "bi-plus-lg"}
+    ]) }}
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="categorias-table">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Puntos por Gramo</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="categorias-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ modal_form(id="crearModal", title="Nueva Categoría", variant="success", fields=[
+  {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
+  {"name": "puntos_por_gramo", "label": "Puntos por Gramo", "type": "number", "step": "0.01", "min": "0", "required": true}
+], submit_text="Guardar") }}
+
+{{ modal_form(id="editarModal", title="Editar Categoría", variant="primary", fields=[
+  {"name": "categoria_id", "type": "hidden"},
+  {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
+  {"name": "puntos_por_gramo", "label": "Puntos por Gramo", "type": "number", "step": "0.01", "min": "0", "required": true}
+], submit_text="Actualizar") }}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!AdminUI.checkAuth()) return;
+
+  function renderCategorias(data) {
+    return data.map(c => `
+      <tr>
+        <td class="fw-semibold">${c.nombre}</td>
+        <td><span class="badge bg-info text-dark">${c.puntos_por_gramo} pts/g</span></td>
+        <td>
+          <button class="btn btn-outline-primary btn-sm editar-btn" title="Editar"
+            data-id="${c.id}" data-nombre="${c.nombre}" data-puntos="${c.puntos_por_gramo}">
+            <i class="bi bi-pencil"></i>
+          </button>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  AdminUI.loadTable('/categorias-reciclaje/admin/list', 'categorias-body', renderCategorias, {
+    emptyMessage: 'No hay categorías registradas.',
+    colspan: 3
+  });
+
+  document.querySelectorAll('[id$="-form"]').forEach(form => {
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const isEdit = form.id === 'editarForm';
+      const fd = new FormData(form);
+      const id = fd.get('categoria_id');
+      if (id) fd.delete('categoria_id');
+      const url = id ? `/categorias-reciclaje/${id}` : '/categorias-reciclaje/';
+      await AdminUI.submitForm(form.id, url, id ? 'put' : 'post', {
+        modalId: isEdit ? 'editarModal' : 'crearModal',
+        onSuccess: () => AdminUI.loadTable('/categorias-reciclaje/admin/list', 'categorias-body', renderCategorias, {colspan: 3})
+      });
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.editar-btn');
+    if (!btn) return;
+    const form = document.getElementById('editarForm');
+    form.querySelector('[name="categoria_id"]').value = btn.dataset.id;
+    form.querySelector('[name="nombre"]').value = btn.dataset.nombre;
+    form.querySelector('[name="puntos_por_gramo"]').value = btn.dataset.puntos;
+    new bootstrap.Modal(document.getElementById('editarModal')).show();
+  });
+});
+</script>
+
+{% endcall %}

@@ -4,14 +4,25 @@ from sqlmodel import Session, select
 from contextlib import asynccontextmanager
 from fastapi.staticfiles import StaticFiles
 
-# base de datos
-from database import create_tables
-from database.db_config import engine
-from app.models.categorias_reciclaje_model import CategoriaReciclajeModel
-
-
-# controllers
-from app.controller import reciclador_router, categoria_router, pages_routes, usuarios_router, premios_router
+from app.core.database import create_tables, engine
+from app.models.categoria_reciclaje import CategoriaReciclaje
+from app.models.usuario import Usuario, RolEnum
+from app.utils.password import hash_password
+from app.routers import (
+    auth_router,
+    recicladores_router,
+    categorias_router,
+    usuarios_router,
+    premios_router,
+    cupones_router,
+)
+from app.views import (
+    public_views_router,
+    auth_views_router,
+    admin_views_router,
+    reciclador_views_router,
+    colaborador_views_router,
+)
 
 
 @asynccontextmanager
@@ -19,20 +30,33 @@ async def lifespan(app: FastAPI):
     create_tables()
 
     with Session(engine) as session:
-        existe = session.exec(select(CategoriaReciclajeModel)).first()
+        existe = session.exec(select(CategoriaReciclaje)).first()
 
         if not existe:
             session.add_all(
                 [
-                    CategoriaReciclajeModel(
-                        nombre="Plástico", puntos_por_gramo=0.10, activa=True
-                    ),
-                    CategoriaReciclajeModel(
-                        nombre="Aluminio", puntos_por_gramo=0.20, activa=True
-                    ),
+                    CategoriaReciclaje(nombre="Plástico", puntos_por_gramo=0.10),
+                    CategoriaReciclaje(nombre="Aluminio", puntos_por_gramo=0.20),
                 ]
             )
+            session.commit()
 
+        existe_usuario = session.exec(select(Usuario)).first()
+
+        if not existe_usuario:
+            admin = Usuario(
+                nombre_completo="Admin Principal",
+                correo="admin@ecodesarrolladores.com",
+                contrasena=hash_password("admin123"),
+                rol=RolEnum.Admin,
+            )
+            colaborador = Usuario(
+                nombre_completo="Colaborador Principal",
+                correo="colaborador@ecodesarrolladores.com",
+                contrasena=hash_password("colab123"),
+                rol=RolEnum.Colaborador,
+            )
+            session.add_all([admin, colaborador])
             session.commit()
 
     yield
@@ -48,9 +72,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-app.mount("/static", StaticFiles(directory="static"), name="static")
-app.include_router(pages_routes)
-app.include_router(reciclador_router)
-app.include_router(categoria_router)
+app.mount(
+    "/static",
+    StaticFiles(directory="static"),
+    name="static",
+)
+app.include_router(auth_router)
+app.include_router(recicladores_router)
+app.include_router(categorias_router)
 app.include_router(usuarios_router)
 app.include_router(premios_router)
+app.include_router(cupones_router)
+app.include_router(public_views_router)
+app.include_router(auth_views_router)
+app.include_router(admin_views_router)
+app.include_router(reciclador_views_router)
+app.include_router(colaborador_views_router)

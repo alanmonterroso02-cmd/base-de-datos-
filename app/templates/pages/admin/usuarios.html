@@ -1,0 +1,102 @@
+{% from "layouts/dashboard/dashboard_admin.html" import dashboard_admin %}
+{% from "components/admin/page_header.html" import page_header %}
+{% from "components/admin/modal_form.html" import modal_form %}
+
+{% call dashboard_admin(title="Usuarios") %}
+
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm">
+    {{ page_header(title="Gestión de Usuarios", buttons=[
+      {"label": "Nuevo Usuario", "modal": "crearModal", "icon": "bi-plus-lg"}
+    ]) }}
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="usuarios-table">
+          <thead class="table-light">
+            <tr>
+              <th>Nombre</th>
+              <th>Correo</th>
+              <th>Rol</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="usuarios-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ modal_form(id="crearModal", title="Nuevo Usuario", variant="success", fields=[
+  {"name": "nombre_completo", "label": "Nombre Completo", "type": "text", "required": true},
+  {"name": "correo", "label": "Correo", "type": "email", "required": true},
+  {"name": "contrasena", "label": "Contraseña", "type": "password", "required": true},
+  {"name": "rol", "label": "Rol", "type": "select", "required": true,
+   "options": [{"value": "Admin", "label": "Admin"}, {"value": "Colaborador", "label": "Colaborador"}],
+   "placeholder": "Seleccionar..."}
+], submit_text="Guardar") }}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!AdminUI.checkAuth()) return;
+
+  function renderUsuarios(data) {
+    return data.map(u => {
+      const activo = u.activo;
+      return `
+      <tr class="${activo ? '' : 'table-secondary text-muted'}">
+        <td class="fw-semibold">${u.nombre_completo}</td>
+        <td>${u.correo}</td>
+        <td><span class="badge ${u.rol === 'Admin' ? 'bg-dark' : 'bg-primary'}">${u.rol}</span></td>
+        <td>${activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Inactivo</span>'}</td>
+        <td>
+          ${activo
+            ? `<button class="btn btn-outline-danger btn-sm eliminar-btn" title="Desactivar" data-id="${u.id}" data-nombre="${u.nombre_completo}"><i class="bi bi-person-x"></i></button>`
+            : `<button class="btn btn-outline-success btn-sm reactivar-btn" title="Reactivar" data-id="${u.id}" data-nombre="${u.nombre_completo}"><i class="bi bi-person-check"></i></button>`
+          }
+        </td>
+      </tr>
+    `}).join('');
+  }
+
+  AdminUI.loadTable('/usuarios/list', 'usuarios-body', renderUsuarios, {
+    emptyMessage: 'No hay usuarios registrados.',
+    colspan: 5
+  });
+
+  document.getElementById('crearForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    AdminUI.submitForm('crearForm', '/usuarios/registro', 'post', {
+      modalId: 'crearModal',
+      transformData: (fd) => ({
+        nombre_completo: fd.get('nombre_completo'),
+        correo: fd.get('correo'),
+        contrasena: fd.get('contrasena'),
+        rol: fd.get('rol'),
+      }),
+      onSuccess: () => AdminUI.loadTable('/usuarios/list', 'usuarios-body', renderUsuarios, {colspan: 5})
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('.eliminar-btn');
+    if (el) {
+      AdminUI.confirmAction(`¿Desactivar a "${el.dataset.nombre}"?`, async () => {
+        await EcoAPI.del('/usuarios/' + el.dataset.id);
+        AdminUI.loadTable('/usuarios/list', 'usuarios-body', renderUsuarios, {colspan: 5});
+      });
+      return;
+    }
+    const reactBtn = e.target.closest('.reactivar-btn');
+    if (reactBtn) {
+      AdminUI.confirmAction(`¿Reactivar a "${reactBtn.dataset.nombre}"?`, async () => {
+        await EcoAPI.patch('/usuarios/' + reactBtn.dataset.id + '/reactivar');
+        AdminUI.loadTable('/usuarios/list', 'usuarios-body', renderUsuarios, {colspan: 5});
+      });
+    }
+  });
+});
+</script>
+
+{% endcall %}

@@ -31,7 +31,7 @@ services:
       db:
         condition: service_healthy
     volumes:
-      - uploads_data:/app/static/uploads
+      - uploads_data:/app/app/static/uploads
 
 volumes:
   mysql_data:

@@ -1,0 +1,21 @@
+{% from "layouts/pagina_publica.html" import pagina_publica %}
+{% from "components/navigation/navbar.html" import navbar %}
+{% from "components/auth/login_form.html" import login_form %}
+
+{% call pagina_publica("Iniciar Sesión - Colaborador") %}
+{{ navbar() }}
+{{ login_form(
+  title="Colaborador",
+  subtitle="Ingresa tu correo y contraseña",
+  fields=[
+    {"name": "correo", "label": "Correo electrónico", "type": "email", "placeholder": "correo@ejemplo.com", "required": true},
+    {"name": "contrasena", "label": "Contraseña", "type": "password", "placeholder": "••••••••", "required": true}
+  ],
+  api_url="/usuarios/login",
+  success_redirect="/usuario/inicio",
+  success_redirect_admin="/admin/dashboard",
+  secondary_url="/login",
+  secondary_text="Reciclador",
+  role="colaborador"
+) }}
+{% endcall %}

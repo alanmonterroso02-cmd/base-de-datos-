@@ -1,0 +1,24 @@
+{% from "dashboards/base.html" import dashboard_base %}
+
+{% macro dashboard_reciclador(title) %}
+{% set _caller_content = caller() %}
+{% set nav_items = [
+  {"label": "Inicio", "url": "/reciclador/inicio", "icon": "bi-house-door-fill", "active": title == "Inicio"},
+  {"label": "Canjear Puntos", "url": "/reciclador/premios", "icon": "bi-gift-fill", "active": title == "Premios Disponibles"},
+  {"label": "Mis Cupones", "url": "/reciclador/mis-cupones", "icon": "bi-ticket", "active": title == "Mis Cupones"},
+  {"label": "Cerrar Sesión", "url": "/logout", "icon": "bi-box-arrow-right", "active": false, "bottom": true}
+] %}
+{% call dashboard_base(
+  title=title,
+  nav_items=nav_items,
+  sidebar_variant="success",
+  brand="EcoDesarrolladores",
+  title_color="success",
+  profile_name_id="eco-nombre",
+  profile_points_id="eco-puntos",
+  show_points=true,
+  profile_api_url="/reciclador/perfil"
+) %}
+{{ _caller_content }}
+{% endcall %}
+{% endmacro %}

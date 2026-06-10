@@ -1,0 +1,54 @@
+{% macro modal_form(id, title, fields=[], submit_text="Guardar", variant="success", size="") %}
+<div class="modal fade" id="{{ id }}" tabindex="-1">
+  <div class="modal-dialog {{ 'modal-' ~ size if size }} modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-{{ variant }} text-white">
+        <h5 class="modal-title">{{ title }}</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="{{ id }}-form">
+        {% for field in fields %}
+        <div class="modal-body">
+          {% if field.type == "hidden" %}
+          <input type="hidden" name="{{ field.name }}" value="{{ field.value or '' }}">
+          {% elif field.type == "textarea" %}
+          <div class="mb-3">
+            <label class="form-label small fw-medium">{{ field.label }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+            <textarea class="form-control" name="{{ field.name }}" rows="{{ field.rows or 2 }}" {% if field.required %}required{% endif %}>{{ field.value or '' }}</textarea>
+          </div>
+          {% elif field.type == "select" %}
+          <div class="mb-3">
+            <label class="form-label small fw-medium">{{ field.label }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+            <select class="form-select" name="{{ field.name }}" {% if field.required %}required{% endif %}>
+              {% if field.placeholder %}<option value="">{{ field.placeholder }}</option>{% endif %}
+              {% for opt in field.options %}
+              <option value="{{ opt.value }}" {% if field.selected == opt.value %}selected{% endif %}>{{ opt.label }}</option>
+              {% endfor %}
+            </select>
+          </div>
+          {% elif field.type == "file" %}
+          <div class="mb-3">
+            <label class="form-label small fw-medium">{{ field.label }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+            <input type="file" class="form-control" name="{{ field.name }}" accept="{{ field.accept or 'image/*' }}" {% if field.required %}required{% endif %}>
+            {% if field.help_text %}<small class="text-muted">{{ field.help_text }}</small>{% endif %}
+          </div>
+          {% else %}
+          <div class="mb-3">
+            <label class="form-label small fw-medium">{{ field.label }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+            <input type="{{ field.type or 'text' }}" class="form-control" name="{{ field.name }}"
+                   value="{{ field.value or '' }}" placeholder="{{ field.placeholder or '' }}"
+                   step="{{ field.step or '' }}" min="{{ field.min or '' }}"
+                   {% if field.required %}required{% endif %}>
+          </div>
+          {% endif %}
+        </div>
+        {% endfor %}
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-{{ variant }} btn-sm">{{ submit_text }}</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+{% endmacro %}

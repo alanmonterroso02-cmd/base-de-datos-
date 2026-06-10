@@ -1,0 +1,20 @@
+{% from "layouts/dashboard/dashboard_admin.html" import dashboard_admin %}
+
+{% call dashboard_admin(title="Dashboard") %}
+
+<div class="container-fluid mt-4">
+  <div class="row">
+    <div class="col-md-12">
+      <div class="card shadow-sm">
+        <div class="card-header bg-dark text-white">
+          <h5 class="mb-0">Panel de Administración</h5>
+        </div>
+        <div class="card-body">
+          <p class="text-muted">Bienvenido al panel de administración. Selecciona una opción del menú lateral.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endcall %}

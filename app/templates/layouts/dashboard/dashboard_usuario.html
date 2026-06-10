@@ -1,0 +1,24 @@
+{% from "dashboards/base.html" import dashboard_base %}
+
+{% macro dashboard_usuario(title) %}
+{% set _caller_content = caller() %}
+{% set nav_items = [
+  {"label": "Inicio", "url": "/usuario/inicio", "icon": "bi-house-door-fill", "active": title == "Inicio"},
+  {"label": "Recicladores", "url": "/usuario/recicladores", "icon": "bi-people", "active": false},
+  {"label": "Canjear Cupón", "url": "/usuario/canje", "icon": "bi-ticket-perforated", "active": title == "Canjear Cupón"},
+  {"label": "Cerrar Sesión", "url": "/logout", "icon": "bi-box-arrow-right", "active": false, "bottom": true}
+] %}
+{% call dashboard_base(
+  title=title,
+  nav_items=nav_items,
+  sidebar_variant="primary",
+  brand="Colaborador",
+  title_color="primary",
+  profile_name_id="usuario-nombre",
+  profile_points_id="usuario-rol",
+  show_points=false,
+  profile_api_url="/usuarios/perfil"
+) %}
+{{ _caller_content }}
+{% endcall %}
+{% endmacro %}

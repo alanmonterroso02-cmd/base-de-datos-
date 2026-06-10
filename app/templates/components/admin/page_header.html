@@ -1,0 +1,15 @@
+{% macro page_header(title, buttons=[], class="") %}
+<div class="card-header bg-dark text-white d-flex justify-content-between align-items-center {{ class }}">
+  <h5 class="mb-0">{{ title }}</h5>
+  {% if buttons %}
+  <div class="d-flex gap-2">
+    {% for btn in buttons %}
+    <button class="btn btn-{{ btn.variant or 'light' }} btn-sm" data-bs-toggle="modal" data-bs-target="#{{ btn.modal }}">
+      {% if btn.icon %}<i class="bi {{ btn.icon }} me-1"></i>{% endif %}
+      {{ btn.label }}
+    </button>
+    {% endfor %}
+  </div>
+  {% endif %}
+</div>
+{% endmacro %}

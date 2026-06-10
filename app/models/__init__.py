@@ -1,5 +1,6 @@
-from .categorias_reciclaje_model import CategoriaReciclajeModel
-from .recicladores_model import RecicladoresModel
-from .cupon_model import CuponModel
-from .movimiento_puntos_model import MovimientoPuntos
-from .premio_model import PremioModel
+from .categoria_reciclaje import CategoriaReciclaje
+from .reciclador import Reciclador
+from .cupon import Cupon
+from .movimiento_puntos import MovimientoPuntos
+from .premio import Premio
+from .usuario import Usuario, RolEnum

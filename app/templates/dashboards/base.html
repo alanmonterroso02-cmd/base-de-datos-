@@ -1,0 +1,72 @@
+{% from "layouts/pagina_publica.html" import pagina_publica %}
+{% from "components/navigation/sidebar.html" import sidebar %}
+{% from "components/dashboard/profile_header.html" import profile_header %}
+
+{% macro dashboard_base(title, nav_items, sidebar_variant="success", brand="EcoDesarrolladores", title_color="success", profile_name_id="eco-nombre", profile_points_id="eco-puntos", show_points=true, profile_api_url="/reciclador/perfil") %}
+{% set _content = caller() %}
+{% call pagina_publica(title) %}
+<div class="container-fluid p-0">
+  <div class="row g-0 min-vh-100">
+    {{ sidebar(items=nav_items, variant=sidebar_variant, brand=brand) }}
+    <div class="col-md-9 col-lg-10 d-flex flex-column bg-light">
+      <nav class="navbar bg-white border-bottom shadow-sm px-4 flex-shrink-0">
+        <div class="container-fluid">
+          <div class="d-flex align-items-center gap-2">
+            <button class="btn btn-light btn-sm d-md-none" type="button" data-bs-toggle="collapse" data-bs-target="#sidebar">
+              <i class="bi bi-list"></i>
+            </button>
+            <h4 class="fw-bold text-{{ title_color }} mb-0">{{ title }}</h4>
+          </div>
+          {{ profile_header(name_id=profile_name_id, points_id=profile_points_id, show_points=show_points) }}
+        </div>
+      </nav>
+      <main class="flex-grow-1 p-4">
+        <div class="card border-0 shadow-sm">
+          <div class="card-body">
+            {{ _content }}
+          </div>
+        </div>
+      </main>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('click', (e) => {
+  const link = e.target.closest('a[href="/logout"]');
+  if (link) {
+    e.preventDefault();
+    EcoAPI.logout();
+  }
+});
+
+(async function cargarPerfil() {
+  const token = EcoAPI.getToken();
+  if (!token) {
+    const rol = EcoAPI.getCookie("rol");
+    if (rol === "Admin" || rol === "Colaborador") {
+      window.location.href = "/login/colaborador";
+    } else {
+      window.location.href = "/login";
+    }
+    return;
+  }
+  try {
+    const perfil = await EcoAPI.get("{{ profile_api_url }}");
+    if (!perfil) return;
+    const nombreEl = document.getElementById("{{ profile_name_id }}");
+    const puntosEl = document.getElementById("{{ profile_points_id }}");
+    if (nombreEl) nombreEl.textContent = perfil.nombre_completo;
+    {% if show_points %}
+    if (puntosEl) puntosEl.textContent = perfil.puntos + " pts";
+    {% else %}
+    if (puntosEl) puntosEl.textContent = perfil.rol;
+    {% endif %}
+  } catch (error) {
+    console.error("Error cargando perfil:", error);
+    EcoToast.error("Error al cargar el perfil");
+  }
+})();
+</script>
+{% endcall %}
+{% endmacro %}

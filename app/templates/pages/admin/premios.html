@@ -1,0 +1,155 @@
+{% from "layouts/dashboard/dashboard_admin.html" import dashboard_admin %}
+{% from "components/admin/page_header.html" import page_header %}
+{% from "components/admin/modal_form.html" import modal_form %}
+
+{% call dashboard_admin(title="Premios") %}
+
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm">
+    {{ page_header(title="Gestión de Premios", buttons=[
+      {"label": "Nuevo Premio", "modal": "crearModal", "icon": "bi-plus-lg"}
+    ]) }}
+    <div class="card-body">
+      <div class="table-responsive">
+        <table class="table table-hover align-middle" id="premios-table">
+          <thead class="table-light">
+            <tr>
+              <th>Imagen</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Costo (pts)</th>
+              <th>Stock</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="premios-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+{{ modal_form(id="crearModal", title="Nuevo Premio", variant="success", size="lg", fields=[
+  {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
+  {"name": "descripcion", "label": "Descripción", "type": "textarea", "rows": 2},
+  {"name": "costo_puntos", "label": "Costo en Puntos", "type": "number", "step": "0.01", "min": "0", "required": true},
+  {"name": "stock", "label": "Stock", "type": "number", "min": "0", "required": true},
+  {"name": "imagen", "label": "Imagen", "type": "file", "required": true}
+], submit_text="Guardar") }}
+
+{{ modal_form(id="editarModal", title="Editar Premio", variant="primary", size="lg", fields=[
+  {"name": "premio_id", "type": "hidden"},
+  {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
+  {"name": "descripcion", "label": "Descripción", "type": "textarea", "rows": 2},
+  {"name": "costo_puntos", "label": "Costo en Puntos", "type": "number", "step": "0.01", "min": "0"},
+  {"name": "imagen", "label": "Nueva Imagen", "type": "file", "help_text": "Dejar vacío para mantener la actual"}
+], submit_text="Actualizar") }}
+
+{{ modal_form(id="stockModal", title="Agregar Stock", variant="warning", size="", fields=[
+  {"name": "premio_id", "type": "hidden"},
+  {"name": "cantidad", "label": "Cantidad a agregar", "type": "number", "min": "1", "required": true}
+], submit_text="Agregar") }}
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  if (!AdminUI.checkAuth()) return;
+
+  function renderPremios(data) {
+    return data.map(p => `
+      <tr>
+        <td><img src="${p.imagen || '/static/img/default-premio.png'}" style="width: 48px; height: 48px; object-fit: cover; border-radius: 6px;" alt="${p.nombre}"></td>
+        <td class="fw-semibold">${p.nombre}</td>
+        <td class="small text-muted">${p.descripcion || '-'}</td>
+        <td><span class="badge bg-warning text-dark">${p.costo_puntos} pts</span></td>
+        <td>${p.stock}</td>
+        <td>${p.activa ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Inactivo</span>'}</td>
+        <td>
+          <div class="d-flex gap-1">
+            <button class="btn btn-outline-primary btn-sm editar-btn" title="Editar"
+              data-id="${p.id}" data-nombre="${p.nombre}" data-descripcion="${(p.descripcion || '')}" data-costo="${p.costo_puntos}">
+              <i class="bi bi-pencil"></i>
+            </button>
+            <button class="btn btn-outline-warning btn-sm stock-btn" title="Agregar Stock" data-id="${p.id}">
+              <i class="bi bi-box-seam"></i>
+            </button>
+            <button class="btn btn-outline-${p.activa ? 'secondary' : 'success'} btn-sm toggle-btn" title="${p.activa ? 'Desactivar' : 'Activar'}" data-id="${p.id}" data-activa="${p.activa}">
+              <i class="bi bi-${p.activa ? 'pause' : 'play'}-fill"></i>
+            </button>
+          </div>
+        </td>
+      </tr>
+    `).join('');
+  }
+
+  AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {
+    emptyMessage: 'No hay premios registrados.',
+    colspan: 7
+  });
+
+  async function toggleActivo(id, activa) {
+    const action = activa ? 'desactivar' : 'activar';
+    await AdminUI.confirmAction(`¿Estás seguro de ${action} este premio?`, async () => {
+      await EcoAPI.patch(`/premios/${id}/toggle`);
+      AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7});
+    });
+  }
+
+  document.getElementById('crearForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    AdminUI.submitForm('crearForm', '/premios/', 'post', {
+      modalId: 'crearModal',
+      onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
+    });
+  });
+
+  document.getElementById('editarForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const id = fd.get('premio_id');
+    fd.delete('premio_id');
+    if (!fd.get('imagen')?.name) fd.delete('imagen');
+    AdminUI.submitForm('editarForm', `/premios/${id}`, 'put', {
+      modalId: 'editarModal',
+      onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
+    });
+  });
+
+  document.getElementById('stockForm').addEventListener('submit', (e) => {
+    e.preventDefault();
+    const fd = new FormData(e.target);
+    const id = fd.get('premio_id');
+    AdminUI.submitForm('stockForm', `/premios/${id}/stock`, 'patch', {
+      modalId: 'stockModal',
+      transformData: (fd) => ({ cantidad: parseInt(fd.get('cantidad')) }),
+      onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
+    });
+  });
+
+  document.addEventListener('click', (e) => {
+    const btn = e.target.closest('.editar-btn');
+    if (btn) {
+      const form = document.getElementById('editarForm');
+      form.querySelector('[name="premio_id"]').value = btn.dataset.id;
+      form.querySelector('[name="nombre"]').value = btn.dataset.nombre;
+      form.querySelector('[name="descripcion"]').value = btn.dataset.descripcion;
+      form.querySelector('[name="costo_puntos"]').value = btn.dataset.costo;
+      new bootstrap.Modal(document.getElementById('editarModal')).show();
+      return;
+    }
+    const stockBtn = e.target.closest('.stock-btn');
+    if (stockBtn) {
+      document.getElementById('stockForm').querySelector('[name="premio_id"]').value = stockBtn.dataset.id;
+      document.getElementById('stockForm').querySelector('[name="cantidad"]').value = '';
+      new bootstrap.Modal(document.getElementById('stockModal')).show();
+      return;
+    }
+    const toggleBtn = e.target.closest('.toggle-btn');
+    if (toggleBtn) {
+      toggleActivo(toggleBtn.dataset.id, toggleBtn.dataset.activa === 'true');
+    }
+  });
+});
+</script>
+
+{% endcall %}

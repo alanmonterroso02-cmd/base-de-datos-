@@ -1,0 +1,80 @@
+{% macro login_form(title, subtitle, api_url, success_redirect, fields=[], success_redirect_admin="", secondary_url="", secondary_text="", role="") %}
+<div class="min-vh-100 d-flex align-items-center justify-content-center px-5" style="background: #fff;">
+  <div style="max-width: 500px; width: 100%;">
+    <div class="text-center">
+      <h1 class="h1 fw-semibold text-dark mb-1">{{ title }}</h1>
+      <p class="small text-secondary mb-0">{{ subtitle }}</p>
+    </div>
+    <form id="loginForm">
+      {% for field in fields %}
+      <div class="mb-3">
+        <label for="{{ field.name }}" class="form-label small fw-medium text-dark">{{ field.label }}{% if field.required %} <span class="text-danger">*</span>{% endif %}</label>
+        <input type="{{ field.type }}"
+               class="form-control form-control-sm border-secondary-subtle py-2"
+               id="{{ field.name }}"
+               name="{{ field.name }}"
+               placeholder="{{ field.placeholder }}"
+               {% if field.required %}required{% endif %}
+               style="background: #fafafa;">
+      </div>
+      {% endfor %}
+      <button type="submit" class="btn btn-dark btn-sm w-100 py-2 fw-medium">Iniciar Sesión</button>
+    </form>
+    {% if secondary_url %}
+    <div class="mt-2">
+      <a href="{{ secondary_url }}" class="btn btn-outline-secondary btn-sm w-100 py-2 fw-medium">{{ secondary_text }}</a>
+    </div>
+    {% endif %}
+  </div>
+</div>
+<script>
+document.getElementById('loginForm').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const btn = e.target.querySelector('.btn');
+  btn.disabled = true;
+  btn.textContent = 'Ingresando...';
+  try {
+    const formData = new FormData(e.target);
+    {% if role == "reciclador" %}
+    const res = await fetch('{{ api_url }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: new URLSearchParams(formData)
+    });
+    {% else %}
+    const body = {};
+    formData.forEach((value, key) => { body[key] = value; });
+    const res = await fetch('{{ api_url }}', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body)
+    });
+    {% endif %}
+    const data = await res.json();
+    if (!res.ok) {
+      EcoToast.error(data.detail || 'Error de autenticación');
+      btn.disabled = false;
+      btn.textContent = 'Iniciar Sesión';
+      return;
+    }
+    document.cookie = `token=${data.token}; path=/; max-age=1500; SameSite=Lax`;
+    {% if role == "reciclador" %}
+    document.cookie = `rol=Reciclador; path=/; max-age=1500; SameSite=Lax`;
+    window.location.href = '{{ success_redirect }}';
+    {% else %}
+    const rol = data.usuario?.rol;
+    document.cookie = `rol=${rol}; path=/; max-age=1500; SameSite=Lax`;
+    if (rol === 'Admin') {
+      window.location.href = '{{ success_redirect_admin or "/admin/dashboard" }}';
+    } else {
+      window.location.href = '{{ success_redirect }}';
+    }
+    {% endif %}
+  } catch {
+    EcoToast.error('Error de conexión');
+    btn.disabled = false;
+    btn.textContent = 'Iniciar Sesión';
+  }
+});
+</script>
+{% endmacro %}

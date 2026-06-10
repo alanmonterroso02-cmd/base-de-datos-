@@ -1,0 +1,379 @@
+{% from "layouts/dashboard/dashboard_usuario.html" import dashboard_usuario %}
+
+{% call dashboard_usuario(title="Recicladores") %}
+
+<div class="container-fluid mt-4">
+  <div class="card shadow-sm">
+    <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+      <h5 class="mb-0">Gesti&oacute;n de Recicladores</h5>
+      <div class="d-flex gap-2">
+        <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#crearModal">
+          <i class="bi bi-plus-lg me-1"></i>Nuevo Reciclador
+        </button>
+        <button class="btn btn-outline-light btn-sm" data-bs-toggle="modal" data-bs-target="#masivoModal">
+          <i class="bi bi-upload me-1"></i>Registro Masivo
+        </button>
+      </div>
+    </div>
+    <div class="card-body">
+      <div class="table-responsive" style="max-height: 500px; overflow-y: auto;">
+        <table class="table table-hover align-middle" id="recicladores-table">
+          <thead class="table-light sticky-top">
+            <tr>
+              <th>NIT</th>
+              <th>Nombre Completo</th>
+              <th>Puntos</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="recicladores-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="crearModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-success text-white">
+        <h5 class="modal-title">Nuevo Reciclador</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <form id="crearForm">
+        <div class="modal-body">
+          <div class="mb-3">
+            <label class="form-label small fw-medium">NIT *</label>
+            <input type="number" class="form-control" name="nit" required>
+          </div>
+          <div class="mb-3">
+            <label class="form-label small fw-medium">Nombre Completo *</label>
+            <input type="text" class="form-control" name="nombre_completo" required>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+          <button type="submit" class="btn btn-success btn-sm">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="masivoModal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-info text-white">
+        <h5 class="modal-title">Registro Masivo de Recicladores</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row g-2 mb-3">
+          <div class="col-md-5">
+            <input type="number" class="form-control form-control-sm" id="masivo-nit" placeholder="NIT">
+          </div>
+          <div class="col-md-5">
+            <input type="text" class="form-control form-control-sm" id="masivo-nombre" placeholder="Nombre completo">
+          </div>
+          <div class="col-md-2">
+            <button class="btn btn-success btn-sm w-100" id="masivo-agregar-btn">
+              <i class="bi bi-plus-lg"></i> Agregar
+            </button>
+          </div>
+        </div>
+        <div class="table-responsive" style="max-height: 250px; overflow-y: auto;">
+          <table class="table table-sm table-striped">
+            <thead class="table-light">
+              <tr>
+                <th>NIT</th>
+                <th>Nombre</th>
+                <th style="width:60px"></th>
+              </tr>
+            </thead>
+            <tbody id="masivo-lista-body">
+              <tr id="masivo-vacio">
+                <td colspan="3" class="text-muted text-center py-3">No hay recicladores agregados.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+        <div id="masivo-resultado" class="d-none mt-2"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cancelar</button>
+        <button class="btn btn-info btn-sm text-white" id="masivo-registrar-btn">Registrar Todos</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="modal fade" id="detalleModal" tabindex="-1">
+  <div class="modal-dialog modal-xl modal-dialog-centered">
+    <div class="modal-content">
+      <div class="modal-header bg-primary text-white">
+        <h5 class="modal-title" id="detalleModalTitle">Detalle del Reciclador</h5>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
+      <div class="modal-body">
+        <div class="row mb-4">
+          <div class="col-md-4">
+            <strong>NIT:</strong> <span id="detalle-nit"></span>
+          </div>
+          <div class="col-md-4">
+            <strong>Nombre:</strong> <span id="detalle-nombre"></span>
+          </div>
+          <div class="col-md-4">
+            <strong>Puntos:</strong> <span id="detalle-puntos" class="badge bg-warning text-dark fs-6"></span>
+          </div>
+        </div>
+
+        <ul class="nav nav-tabs" id="detalleTabs" role="tablist">
+          <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="historial-tab" data-bs-toggle="tab" data-bs-target="#historial" type="button" role="tab">
+              <i class="bi bi-clock-history me-1"></i>Historial de Puntos
+            </button>
+          </li>
+          <li class="nav-item" role="presentation">
+            <button class="nav-link" id="cupones-tab" data-bs-toggle="tab" data-bs-target="#cupones" type="button" role="tab">
+              <i class="bi bi-ticket me-1"></i>Cupones
+            </button>
+          </li>
+        </ul>
+
+        <div class="tab-content pt-3" id="detalleTabsContent">
+          <div class="tab-pane fade show active" id="historial" role="tabpanel">
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-sm table-striped">
+                <thead class="table-dark sticky-top">
+                  <tr>
+                    <th>Fecha</th>
+                    <th>Motivo</th>
+                    <th>Puntos</th>
+                  </tr>
+                </thead>
+                <tbody id="historial-body"></tbody>
+              </table>
+            </div>
+            <p id="historial-empty" class="text-muted text-center py-3 d-none">Sin movimiento de puntos.</p>
+          </div>
+          <div class="tab-pane fade" id="cupones" role="tabpanel">
+            <div class="table-responsive" style="max-height: 300px; overflow-y: auto;">
+              <table class="table table-sm table-striped">
+                <thead class="table-dark sticky-top">
+                  <tr>
+                    <th>C&oacute;digo</th>
+                    <th>Premio</th>
+                    <th>Emisi&oacute;n</th>
+                    <th>Expiraci&oacute;n</th>
+                    <th>Estado</th>
+                  </tr>
+                </thead>
+                <tbody id="cupones-body"></tbody>
+              </table>
+            </div>
+            <p id="cupones-empty" class="text-muted text-center py-3 d-none">Sin cupones registrados.</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tbody = document.getElementById('recicladores-body');
+
+  async function cargarRecicladores() {
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4"><div class="spinner-border spinner-border-sm me-2"></div>Cargando...</td></tr>';
+    try {
+      const data = await EcoAPI.get('/reciclador/admin/list');
+      if (!data) return;
+      if (data.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No hay recicladores registrados.</td></tr>';
+        return;
+      }
+      tbody.innerHTML = data.map(r => `
+        <tr class="reciclador-row" style="cursor:pointer" data-nit="${r.nit}">
+          <td class="fw-semibold">${r.nit}</td>
+          <td>${r.nombre_completo}</td>
+          <td><span class="badge bg-warning text-dark">${r.puntos} pts</span></td>
+          <td>
+            <button class="btn btn-outline-info btn-sm ver-detalle" title="Ver detalle" data-nit="${r.nit}">
+              <i class="bi bi-eye"></i>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+
+      document.querySelectorAll('.ver-detalle').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          abrirDetalle(btn.dataset.nit);
+        });
+      });
+      document.querySelectorAll('.reciclador-row').forEach(row => {
+        row.addEventListener('click', () => abrirDetalle(row.dataset.nit));
+      });
+    } catch (error) {
+      tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-danger">Error al cargar recicladores.</td></tr>';
+      EcoToast.error('Error al cargar recicladores');
+    }
+  }
+
+  document.getElementById('crearForm').addEventListener('submit', async (e) => {
+    e.preventDefault();
+    const btn = e.target.querySelector('button[type="submit"]');
+    btn.disabled = true; btn.textContent = 'Guardando...';
+    try {
+      const fd = new FormData(e.target);
+      await EcoAPI.post('/reciclador/admin/create', {
+        nit: parseInt(fd.get('nit')),
+        nombre_completo: fd.get('nombre_completo'),
+      });
+      EcoToast.success('Reciclador creado correctamente');
+      bootstrap.Modal.getInstance(document.getElementById('crearModal')).hide();
+      e.target.reset();
+      cargarRecicladores();
+    } catch (error) {
+      EcoToast.error(error.message || 'Error al crear reciclador');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Guardar';
+    }
+  });
+
+  const masivoLista = [];
+
+  document.getElementById('masivo-agregar-btn').addEventListener('click', () => {
+    const nitInput = document.getElementById('masivo-nit');
+    const nombreInput = document.getElementById('masivo-nombre');
+    const nit = parseInt(nitInput.value);
+    const nombre = nombreInput.value.trim();
+    if (!nit || !nombre) { EcoToast.warning('Complete NIT y nombre'); return; }
+    if (masivoLista.some(r => r.nit === nit)) { EcoToast.warning('Ese NIT ya est\u00e1 en la lista'); return; }
+    masivoLista.push({ nit, nombre_completo: nombre });
+    nitInput.value = ''; nombreInput.value = '';
+    nitInput.focus();
+    renderMasivoLista();
+  });
+
+  document.getElementById('masivo-nit').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('masivo-nombre').focus(); }
+  });
+  document.getElementById('masivo-nombre').addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') { e.preventDefault(); document.getElementById('masivo-agregar-btn').click(); }
+  });
+
+  function renderMasivoLista() {
+    const tbody = document.getElementById('masivo-lista-body');
+    const vacio = document.getElementById('masivo-vacio');
+    if (masivoLista.length === 0) {
+      vacio.classList.remove('d-none');
+      tbody.innerHTML = '<tr id="masivo-vacio"><td colspan="3" class="text-muted text-center py-3">No hay recicladores agregados.</td></tr>';
+      return;
+    }
+    vacio.classList.add('d-none');
+    tbody.innerHTML = masivoLista.map((r, i) => `
+      <tr>
+        <td class="fw-semibold">${r.nit}</td>
+        <td>${r.nombre_completo}</td>
+        <td><button class="btn btn-outline-danger btn-sm masivo-eliminar" data-index="${i}" title="Eliminar"><i class="bi bi-trash"></i></button></td>
+      </tr>
+    `).join('');
+    document.querySelectorAll('.masivo-eliminar').forEach(btn => {
+      btn.addEventListener('click', () => {
+        masivoLista.splice(parseInt(btn.dataset.index), 1);
+        renderMasivoLista();
+      });
+    });
+  }
+
+  document.getElementById('masivo-registrar-btn').addEventListener('click', async () => {
+    if (masivoLista.length === 0) { EcoToast.warning('Agregue al menos un reciclador'); return; }
+    const btn = document.getElementById('masivo-registrar-btn');
+    btn.disabled = true; btn.textContent = 'Registrando...';
+    const resultadoDiv = document.getElementById('masivo-resultado');
+    resultadoDiv.classList.add('d-none');
+    try {
+      const res = await EcoAPI.post('/reciclador/admin/create-batch', masivoLista);
+      let html = '';
+      if (res.creados && res.creados.length > 0) {
+        html += `<div class="alert alert-success mb-2">${res.creados.length} reciclador(es) creado(s) correctamente.</div>`;
+      }
+      if (res.errores && res.errores.length > 0) {
+        html += `<div class="alert alert-warning mb-0">${res.errores.join('<br>')}</div>`;
+      }
+      resultadoDiv.innerHTML = html;
+      resultadoDiv.classList.remove('d-none');
+      masivoLista.length = 0;
+      renderMasivoLista();
+      cargarRecicladores();
+    } catch (error) {
+      resultadoDiv.innerHTML = `<div class="alert alert-danger mb-0">${error.message || 'Error en el registro masivo'}</div>`;
+      resultadoDiv.classList.remove('d-none');
+    } finally {
+      btn.disabled = false; btn.textContent = 'Registrar Todos';
+    }
+  });
+
+  async function abrirDetalle(nit) {
+    try {
+      const data = await EcoAPI.get(`/reciclador/admin/${nit}`);
+      document.getElementById('detalle-nit').textContent = data.nit;
+      document.getElementById('detalle-nombre').textContent = data.nombre_completo;
+      document.getElementById('detalle-puntos').textContent = `${data.puntos} pts`;
+      document.getElementById('detalleModalTitle').textContent = `Detalle - ${data.nombre_completo}`;
+
+      const hBody = document.getElementById('historial-body');
+      const hEmpty = document.getElementById('historial-empty');
+      if (data.historial && data.historial.length > 0) {
+        hEmpty.classList.add('d-none');
+        hBody.closest('.table-responsive').classList.remove('d-none');
+        hBody.innerHTML = data.historial.map(h => `
+          <tr>
+            <td class="small">${new Date(h.fecha).toLocaleString()}</td>
+            <td>${h.motivo}</td>
+            <td><span class="badge bg-${h.puntos >= 0 ? 'success' : 'danger'}">${h.puntos >= 0 ? '+' : ''}${h.puntos}</span></td>
+          </tr>
+        `).join('');
+      } else {
+        hEmpty.classList.remove('d-none');
+        hBody.innerHTML = '';
+      }
+
+      const cBody = document.getElementById('cupones-body');
+      const cEmpty = document.getElementById('cupones-empty');
+      if (data.cupones && data.cupones.length > 0) {
+        cEmpty.classList.add('d-none');
+        cBody.closest('.table-responsive').classList.remove('d-none');
+        cBody.innerHTML = data.cupones.map(c => `
+          <tr>
+            <td class="fw-semibold small">${c.codigo}</td>
+            <td>${c.premio_nombre}</td>
+            <td class="small">${c.fecha_emision}</td>
+            <td class="small">${c.fecha_expiracion}</td>
+            <td>
+              ${c.esta_usado
+                ? '<span class="badge bg-secondary">Usado</span>'
+                : '<span class="badge bg-success">Vigente</span>'}
+            </td>
+          </tr>
+        `).join('');
+      } else {
+        cEmpty.classList.remove('d-none');
+        cBody.innerHTML = '';
+      }
+
+      new bootstrap.Modal(document.getElementById('detalleModal')).show();
+    } catch (error) {
+      EcoToast.error('Error al cargar detalle del reciclador');
+    }
+  }
+
+  cargarRecicladores();
+});
+</script>
+
+{% endcall %}

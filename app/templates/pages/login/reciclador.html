@@ -1,0 +1,17 @@
+{% from "layouts/pagina_publica.html" import pagina_publica %}
+{% from "components/navigation/navbar.html" import navbar %}
+{% from "components/auth/login_form.html" import login_form %}
+
+{% call pagina_publica("Iniciar Sesión - Reciclador") %}
+{{ navbar() }}
+{{ login_form(
+  title="Reciclador",
+  subtitle="Ingresa tu NIT para acceder",
+  fields=[{"name": "nit", "label": "NIT", "type": "number", "placeholder": "123456789", "required": true}],
+  api_url="/reciclador/login",
+  success_redirect="/reciclador/inicio",
+  secondary_url="/login/colaborador",
+  secondary_text="Colaborador",
+  role="reciclador"
+) }}
+{% endcall %}

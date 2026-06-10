@@ -1,0 +1,27 @@
+{% from "dashboards/base.html" import dashboard_base %}
+
+{% macro dashboard_admin(title) %}
+{% set _caller_content = caller() %}
+{% set nav_items = [
+  {"label": "Dashboard", "url": "/admin/dashboard", "icon": "bi-speedometer2", "active": title == "Dashboard"},
+  {"label": "", "divider": true},
+  {"label": "Recicladores", "url": "/admin/recicladores", "icon": "bi-people", "active": false},
+  {"label": "Categorías", "url": "/admin/categorias", "icon": "bi-tag", "active": false},
+  {"label": "Premios", "url": "/admin/premios", "icon": "bi-gift", "active": false},
+  {"label": "Usuarios", "url": "/admin/usuarios", "icon": "bi-person-badge", "active": false},
+  {"label": "Cerrar Sesión", "url": "/logout", "icon": "bi-box-arrow-right", "active": false, "bottom": true}
+] %}
+{% call dashboard_base(
+  title=title,
+  nav_items=nav_items,
+  sidebar_variant="dark",
+  brand="Admin Panel",
+  title_color="dark",
+  profile_name_id="admin-nombre",
+  profile_points_id="admin-rol",
+  show_points=false,
+  profile_api_url="/usuarios/perfil"
+) %}
+{{ _caller_content }}
+{% endcall %}
+{% endmacro %}
