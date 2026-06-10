@@ -95,31 +95,29 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   }
 
-  document.getElementById('crearForm').addEventListener('submit', (e) => {
+  document.getElementById('crearModal-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    AdminUI.submitForm('crearForm', '/premios/', 'post', {
+    AdminUI.submitForm('crearModal-form', '/premios/', 'post', {
       modalId: 'crearModal',
       onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
     });
   });
 
-  document.getElementById('editarForm').addEventListener('submit', (e) => {
+  document.getElementById('editarModal-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const id = fd.get('premio_id');
-    fd.delete('premio_id');
-    if (!fd.get('imagen')?.name) fd.delete('imagen');
-    AdminUI.submitForm('editarForm', `/premios/${id}`, 'put', {
+    AdminUI.submitForm('editarModal-form', `/premios/${id}`, 'put', {
       modalId: 'editarModal',
       onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
     });
   });
 
-  document.getElementById('stockForm').addEventListener('submit', (e) => {
+  document.getElementById('stockModal-form').addEventListener('submit', (e) => {
     e.preventDefault();
     const fd = new FormData(e.target);
     const id = fd.get('premio_id');
-    AdminUI.submitForm('stockForm', `/premios/${id}/stock`, 'patch', {
+    AdminUI.submitForm('stockModal-form', `/premios/${id}/stock`, 'patch', {
       modalId: 'stockModal',
       transformData: (fd) => ({ cantidad: parseInt(fd.get('cantidad')) }),
       onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
@@ -129,7 +127,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.editar-btn');
     if (btn) {
-      const form = document.getElementById('editarForm');
+      const form = document.getElementById('editarModal-form');
       form.querySelector('[name="premio_id"]').value = btn.dataset.id;
       form.querySelector('[name="nombre"]').value = btn.dataset.nombre;
       form.querySelector('[name="descripcion"]').value = btn.dataset.descripcion;
@@ -139,8 +137,8 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     const stockBtn = e.target.closest('.stock-btn');
     if (stockBtn) {
-      document.getElementById('stockForm').querySelector('[name="premio_id"]').value = stockBtn.dataset.id;
-      document.getElementById('stockForm').querySelector('[name="cantidad"]').value = '';
+      document.getElementById('stockModal-form').querySelector('[name="premio_id"]').value = stockBtn.dataset.id;
+      document.getElementById('stockModal-form').querySelector('[name="cantidad"]').value = '';
       new bootstrap.Modal(document.getElementById('stockModal')).show();
       return;
     }
