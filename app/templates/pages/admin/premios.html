@@ -109,6 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const id = fd.get('premio_id');
     AdminUI.submitForm('editarModal-form', `/premios/${id}`, 'put', {
       modalId: 'editarModal',
+      transformData: (fd) => {
+        fd.delete('premio_id');
+        if (!fd.get('imagen')?.name) fd.delete('imagen');
+        return fd;
+      },
       onSuccess: () => AdminUI.loadTable('/premios/admin/list', 'premios-body', renderPremios, {colspan: 7})
     });
   });

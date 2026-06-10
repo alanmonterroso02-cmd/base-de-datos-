@@ -22,6 +22,8 @@ UPLOAD_DIR = BASE_DIR / "app" / "static" / "uploads"
 class FileManager:
     @classmethod
     def validate_image(cls, upload_file: UploadFile) -> None:
+        if not upload_file.filename:
+            return
         ext = os.path.splitext(upload_file.filename)[1].lower()
         if ext not in ALLOWED_IMAGE_EXTENSIONS:
             raise HTTPException(

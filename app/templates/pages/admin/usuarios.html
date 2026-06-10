@@ -65,9 +65,9 @@ document.addEventListener('DOMContentLoaded', () => {
     colspan: 5
   });
 
-  document.getElementById('crearForm').addEventListener('submit', (e) => {
+  document.getElementById('crearModal-form').addEventListener('submit', (e) => {
     e.preventDefault();
-    AdminUI.submitForm('crearForm', '/usuarios/registro', 'post', {
+    AdminUI.submitForm('crearModal-form', '/usuarios/registro', 'post', {
       modalId: 'crearModal',
       transformData: (fd) => ({
         nombre_completo: fd.get('nombre_completo'),

@@ -64,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.querySelectorAll('[id$="-form"]').forEach(form => {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
-      const isEdit = form.id === 'editarForm';
+      const isEdit = form.id === 'editarModal-form';
       const fd = new FormData(form);
       const id = fd.get('categoria_id');
       if (id) fd.delete('categoria_id');
@@ -79,7 +79,7 @@ document.addEventListener('DOMContentLoaded', () => {
   document.addEventListener('click', (e) => {
     const btn = e.target.closest('.editar-btn');
     if (!btn) return;
-    const form = document.getElementById('editarForm');
+    const form = document.getElementById('editarModal-form');
     form.querySelector('[name="categoria_id"]').value = btn.dataset.id;
     form.querySelector('[name="nombre"]').value = btn.dataset.nombre;
     form.querySelector('[name="puntos_por_gramo"]').value = btn.dataset.puntos;
