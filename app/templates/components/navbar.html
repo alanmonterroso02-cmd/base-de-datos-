@@ -1,0 +1,46 @@
+{% macro render_navbar(user_name="Usuario", notifications_count=0) %}
+<nav class="navbar navbar-expand-lg navbar-custom sticky-top">
+    <div class="container-fluid">
+        <button class="btn btn-outline-secondary d-md-none me-2" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+        </button>
+
+        <div class="d-flex align-items-center ms-auto">
+            <!-- Notifications -->
+            <div class="dropdown me-3">
+                <a href="#" class="text-eco-text-muted position-relative" data-bs-toggle="dropdown">
+                    <i class="bi bi-bell fs-5"></i>
+                    {% if notifications_count > 0 %}
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger" style="font-size: 0.6rem;">
+                        {{ notifications_count }}
+                    </span>
+                    {% endif %}
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                    <li><a class="dropdown-item py-2" href="#">No hay notificaciones nuevas</a></li>
+                </ul>
+            </div>
+
+            <!-- User Profile -->
+            <div class="dropdown">
+                <a href="#" class="d-flex align-items-center text-decoration-none dropdown-toggle" data-bs-toggle="dropdown">
+                    <div class="text-end me-2 d-none d-sm-block">
+                        <span class="d-block fw-bold text-eco-text" style="font-size: 0.9rem;">{{ user_name }}</span>
+                        <small class="text-eco-text-muted" style="font-size: 0.75rem;">Mi Cuenta</small>
+                    </div>
+                    <img src="https://ui-avatars.com/api/?name={{ user_name }}&background=2ecc71&color=fff"
+                         alt="User Avatar"
+                         class="rounded-circle"
+                         width="40" height="40">
+                </a>
+                <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 rounded-3">
+                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-person me-2"></i> Perfil</a></li>
+                    <li><a class="dropdown-item py-2" href="#"><i class="bi bi-gear me-2"></i> Ajustes</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item py-2 text-danger" href="#"><i class="bi bi-box-arrow-right me-2"></i> Cerrar Sesión</a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</nav>
+{% endmacro %}

@@ -12,7 +12,7 @@
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover align-middle" id="usuarios-table">
-          <thead class="table-light">
+          <thead class="table-success">
             <tr>
               <th>Nombre</th>
               <th>Correo</th>
@@ -48,7 +48,7 @@ document.addEventListener('DOMContentLoaded', () => {
       <tr class="${activo ? '' : 'table-secondary text-muted'}">
         <td class="fw-semibold">${u.nombre_completo}</td>
         <td>${u.correo}</td>
-        <td><span class="badge ${u.rol === 'Admin' ? 'bg-dark' : 'bg-primary'}">${u.rol}</span></td>
+        <td><span class="badge bg-success">${u.rol}</span></td>
         <td>${activo ? '<span class="badge bg-success">Activo</span>' : '<span class="badge bg-secondary">Inactivo</span>'}</td>
         <td>
           ${activo

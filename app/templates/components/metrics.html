@@ -1,0 +1,15 @@
+{% macro render_metric_card(title, value, icon, color_class="text-eco-primary") %}
+<div class="col-12 col-md-4 col-lg-3 mb-4">
+    <div class="card metric-card p-4 h-100">
+        <div class="d-flex align-items-center">
+            <div class="metric-icon {{ color_class }}">
+                <i class="bi {{ icon }}"></i>
+            </div>
+            <div class="ms-3">
+                <small class="text-eco-text-muted d-block mb-1 fw-medium">{{ title }}</small>
+                <h3 class="fw-bold text-eco-text mb-0">{{ value }}</h3>
+            </div>
+        </div>
+    </div>
+</div>
+{% endmacro %}

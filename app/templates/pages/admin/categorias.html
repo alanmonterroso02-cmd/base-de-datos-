@@ -12,7 +12,7 @@
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover align-middle" id="categorias-table">
-          <thead class="table-light">
+          <thead class="table-success">
             <tr>
               <th>Nombre</th>
               <th>Puntos por Gramo</th>
@@ -31,7 +31,7 @@
   {"name": "puntos_por_gramo", "label": "Puntos por Gramo", "type": "number", "step": "0.01", "min": "0", "required": true}
 ], submit_text="Guardar") }}
 
-{{ modal_form(id="editarModal", title="Editar Categoría", variant="primary", fields=[
+{{ modal_form(id="editarModal", title="Editar Categoría", variant="success", fields=[
   {"name": "categoria_id", "type": "hidden"},
   {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
   {"name": "puntos_por_gramo", "label": "Puntos por Gramo", "type": "number", "step": "0.01", "min": "0", "required": true}

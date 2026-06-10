@@ -12,7 +12,7 @@
     <div class="card-body">
       <div class="table-responsive">
         <table class="table table-hover align-middle" id="premios-table">
-          <thead class="table-light">
+          <thead class="table-success">
             <tr>
               <th>Imagen</th>
               <th>Nombre</th>
@@ -38,7 +38,7 @@
   {"name": "imagen", "label": "Imagen", "type": "file", "required": true}
 ], submit_text="Guardar") }}
 
-{{ modal_form(id="editarModal", title="Editar Premio", variant="primary", size="lg", fields=[
+{{ modal_form(id="editarModal", title="Editar Premio", variant="success", size="lg", fields=[
   {"name": "premio_id", "type": "hidden"},
   {"name": "nombre", "label": "Nombre", "type": "text", "required": true},
   {"name": "descripcion", "label": "Descripción", "type": "textarea", "rows": 2},
@@ -46,7 +46,7 @@
   {"name": "imagen", "label": "Nueva Imagen", "type": "file", "help_text": "Dejar vacío para mantener la actual"}
 ], submit_text="Actualizar") }}
 
-{{ modal_form(id="stockModal", title="Agregar Stock", variant="warning", size="", fields=[
+{{ modal_form(id="stockModal", title="Agregar Stock", variant="success", size="", fields=[
   {"name": "premio_id", "type": "hidden"},
   {"name": "cantidad", "label": "Cantidad a agregar", "type": "number", "min": "1", "required": true}
 ], submit_text="Agregar") }}
